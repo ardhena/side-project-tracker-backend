@@ -3,7 +3,7 @@ defmodule Todo.API.V1 do
 
   resources do
     get do
-      json(conn, %{hello: :world})
+      json(conn, %{message: "API V1"})
     end
   end
 end
