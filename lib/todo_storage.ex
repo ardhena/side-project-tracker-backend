@@ -20,22 +20,22 @@ defmodule Todo.Storage do
   def init(:ok) do
     columns = [
       %{
-        key: 'to-do',
+        key: "to-do",
         tasks: [
-          %{name: 'some task', key: 1},
-          %{name: 'another task', key: 2}
+          %{name: "some task", key: 1},
+          %{name: "another task", key: 2}
         ]
       },
       %{
-        key: 'doing',
+        key: "doing",
         tasks: [
-          %{name: 'working on it now', key: 3}
+          %{name: "working on it now", key: 3}
         ]
       },
       %{
-        key: 'done',
+        key: "done",
         tasks: [
-          %{name: 'already done task', key: 4}
+          %{name: "already done task", key: 4}
         ]
       },
     ]
@@ -43,8 +43,11 @@ defmodule Todo.Storage do
   end
 
   def handle_call({:fetch_from_column, key}, _from, columns) do
-    col = Enum.find(columns, fn(col) -> col.key == key end)
-    {:reply, col.tasks, columns}
+    with %{} = col <- Enum.find(columns, fn(col) -> col.key == key end) do
+      {:reply, col.tasks, columns}
+    else
+      nil -> {:reply, [], columns}
+    end
   end
 
   def handle_call({:fetch,}, _from, columns) do
