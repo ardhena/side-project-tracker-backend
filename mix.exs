@@ -23,7 +23,8 @@ defmodule Todo.MixProject do
     [
       {:maru, "~> 0.13"},
       {:cowboy, "~> 2.3"},
-      {:jason, "~> 1.0"}
+      {:jason, "~> 1.0"},
+      {:exsync, "~> 0.2", only: :dev}
     ]
   end
 end
