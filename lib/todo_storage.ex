@@ -56,8 +56,7 @@ defmodule Todo.Storage do
   end
 
   def handle_call({:fetch_tasks}, _from, columns) do
-    tasks = Enum.flat_map(columns, fn col -> col.tasks end)
-    {:reply, tasks, columns}
+    {:reply, columns, columns}
   end
 
   def handle_call({:fetch_tasks, column_key}, _from, columns) do
