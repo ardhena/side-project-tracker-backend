@@ -6,10 +6,12 @@ defmodule Todo.API.V1 do
   end
 
   resources "tasks" do
+    ## get all tasks ##
     get do
       json(conn, Todo.Storage.Adapter.fetch_tasks())
     end
 
+    ## get tasks for column ##
     params do
       requires(:key, type: String)
     end
@@ -18,29 +20,36 @@ defmodule Todo.API.V1 do
       json(conn, Todo.Storage.Adapter.fetch_tasks(params[:key]))
     end
 
+    ## create task ##
     params do
-      requires(:key, type: String)
-
-      group :task, type: Map do
-        requires(:name, type: String)
-      end
+      requires(:column_key, type: String)
+      requires(:task_key, type: String)
     end
 
-    put ":key" do
-      Todo.Storage.Adapter.update_task(params[:key], params[:task][:name])
+    post do
+      Todo.Storage.Adapter.create_task(params[:task_key], params[:column_key])
       json(conn, :ok)
     end
 
+    ## update task ##
     params do
       requires(:key, type: String)
+      requires(:task_name, type: String)
+    end
 
-      group :column, type: Map do
-        requires(:name, type: String)
-      end
+    put ":key" do
+      Todo.Storage.Adapter.update_task(params[:key], params[:task_name])
+      json(conn, :ok)
+    end
+
+    ## move task ##
+    params do
+      requires(:key, type: String)
+      requires(:column_key, type: String)
     end
 
     post ":key/move" do
-      Todo.Storage.Adapter.move_task(params[:key], params[:column][:name])
+      Todo.Storage.Adapter.move_task(params[:key], params[:column_key])
       json(conn, :ok)
     end
   end

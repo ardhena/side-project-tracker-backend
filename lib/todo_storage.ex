@@ -15,6 +15,10 @@ defmodule Todo.Storage do
     GenServer.call(server, {:fetch_tasks, column_key})
   end
 
+  def create_task(server, task_key, column_key) do
+    GenServer.cast(server, {:create_task, task_key, column_key})
+  end
+
   def update_task(server, task_key, task_name) do
     GenServer.cast(server, {:update_task, task_key, task_name})
   end
@@ -61,6 +65,20 @@ defmodule Todo.Storage do
       {:reply, col.tasks, columns}
     else
       nil -> {:reply, [], columns}
+    end
+  end
+
+  def handle_cast({:create_task, task_key, column_key}, columns) do
+    with %{} = col <- Enum.find(columns, fn col -> col.key == column_key end),
+         {key, _} = Integer.parse(task_key),
+         tsk = %{key: key, name: nil} do
+      collection =
+        build_column([tsk | col.tasks], col)
+        |> replace_in_collection(columns)
+
+      {:noreply, collection}
+    else
+      _ -> {:noreply, columns}
     end
   end
 

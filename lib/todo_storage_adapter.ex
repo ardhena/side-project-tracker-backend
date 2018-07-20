@@ -7,6 +7,10 @@ defmodule Todo.Storage.Adapter do
     Todo.Storage.fetch_tasks(Todo.Storage, column_key)
   end
 
+  def create_task(task_key, column_key) do
+    Todo.Storage.create_task(Todo.Storage, task_key, column_key)
+  end
+
   def update_task(task_key, task_name) do
     Todo.Storage.update_task(Todo.Storage, task_key, task_name)
   end

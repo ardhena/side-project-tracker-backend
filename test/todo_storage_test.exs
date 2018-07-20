@@ -26,6 +26,16 @@ defmodule Todo.StorageTest do
     assert Todo.Storage.fetch_tasks(storage, "nonexistingcolumnkey") == []
   end
 
+  test "create_task/3", %{storage: storage} do
+    Todo.Storage.create_task(storage, "6", "to-do")
+
+    assert Todo.Storage.fetch_tasks(storage, "to-do") == [
+             %{key: 6, name: nil},
+             %{key: 1, name: "some task"},
+             %{key: 2, name: "another task"}
+           ]
+  end
+
   test "update_task/3", %{storage: storage} do
     Todo.Storage.update_task(storage, "1", "new task name")
 

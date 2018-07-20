@@ -21,11 +21,23 @@ defmodule Todo.API.V1Test do
            ]
   end
 
+  test "POST /api/v1/tasks/:key" do
+    assert post("/api/v1/tasks") |> json_response == %{
+             "code" => 400,
+             "message" => "Bad Request"
+           }
+
+    assert build_conn()
+           |> put_body_or_params(%{column_key: "doing", task_key: "6"})
+           |> post("/api/v1/tasks")
+           |> json_response == "ok"
+  end
+
   test "PUT /api/v1/tasks/:key" do
     assert put("/api/v1/tasks/1") |> json_response == %{"code" => 400, "message" => "Bad Request"}
 
     assert build_conn()
-           |> put_body_or_params(%{task: %{name: "new name"}})
+           |> put_body_or_params(%{task_name: "new name"})
            |> put("/api/v1/tasks/1")
            |> json_response == "ok"
   end
@@ -37,7 +49,7 @@ defmodule Todo.API.V1Test do
            }
 
     assert build_conn()
-           |> put_body_or_params(%{column: %{name: "doing"}})
+           |> put_body_or_params(%{column_key: "doing"})
            |> post("/api/v1/tasks/1/move")
            |> json_response == "ok"
   end
