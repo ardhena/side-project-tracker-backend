@@ -65,8 +65,9 @@ defmodule Todo.Storage do
   end
 
   def handle_cast({:update_task, task_key, task_name}, columns) do
-    with {%{} = col, %{} = tsk} <-
-           Enum.find(tasks_with_columns(columns), fn {_, tsk} -> tsk.key == task_key end) do
+    with {key, _} = Integer.parse(task_key),
+         {%{} = col, %{} = tsk} <-
+           Enum.find(tasks_with_columns(columns), fn {_, tsk} -> tsk.key == key end) do
       collection =
         task_name
         |> build_task(tsk)
@@ -81,8 +82,9 @@ defmodule Todo.Storage do
   end
 
   def handle_cast({:move_task, task_key, column_key}, columns) do
-    with {%{} = col, %{} = tsk} <-
-           Enum.find(tasks_with_columns(columns), fn {_, tsk} -> tsk.key == task_key end) do
+    with {key, _} = Integer.parse(task_key),
+         {%{} = col, %{} = tsk} <-
+           Enum.find(tasks_with_columns(columns), fn {_, tsk} -> tsk.key == key end) do
       collection =
         Enum.map(columns, fn c ->
           case {c.key == col.key, c.key == column_key} do
