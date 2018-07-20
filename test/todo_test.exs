@@ -1,8 +1,7 @@
 defmodule TodoTest do
   use ExUnit.Case
-  doctest Todo
 
-  test "greets the world" do
-    assert Todo.hello() == :world
+  test "application is already running" do
+    assert {:error, {:already_started, _}} = Todo.start(%{}, %{})
   end
 end
