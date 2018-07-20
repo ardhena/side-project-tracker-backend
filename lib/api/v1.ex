@@ -31,6 +31,9 @@ defmodule Todo.API.V1 do
       json(conn, :ok)
     end
 
+    options do
+    end
+
     ## update task ##
     params do
       requires(:key, type: String)
@@ -42,6 +45,9 @@ defmodule Todo.API.V1 do
       json(conn, :ok)
     end
 
+    options ":key" do
+    end
+
     ## move task ##
     params do
       requires(:key, type: String)
@@ -51,6 +57,9 @@ defmodule Todo.API.V1 do
     post ":key/move" do
       Todo.Storage.Adapter.move_task(params[:key], params[:column_key])
       json(conn, :ok)
+    end
+
+    options ":key/move" do
     end
   end
 end
