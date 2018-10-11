@@ -26,7 +26,8 @@ defmodule Todo.MixProject do
       {:cowboy, "~> 2.3"},
       {:jason, "~> 1.0"},
       {:cors_plug, "~> 1.5"},
-      {:exsync, "~> 0.2", only: :dev}
+      {:exsync, "~> 0.2", only: :dev},
+      {:mock, "~> 0.3.0", only: :test}
     ]
   end
 end

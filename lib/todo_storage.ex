@@ -2,29 +2,30 @@ defmodule Todo.Storage do
   use GenServer
 
   @default_columns [
-      %{
-        key: "to-do",
-        name: "To do",
-        tasks: [
-          %{name: "some task", key: 1},
-          %{name: "another task", key: 2}
-        ]
-      },
-      %{
-        key: "doing",
-        name: "Doing",
-        tasks: [
-          %{name: "working on it now", key: 3}
-        ]
-      },
-      %{
-        key: "done",
-        name: "Done",
-        tasks: [
-          %{name: "already done task", key: 4}
-        ]
-      }
-    ]
+    %{
+      key: "to-do",
+      name: "To do",
+      tasks: [
+        %{name: "some task", key: 1},
+        %{name: "another task", key: 2}
+      ]
+    },
+    %{
+      key: "doing",
+      name: "Doing",
+      tasks: [
+        %{name: "working on it now", key: 3}
+      ]
+    },
+    %{
+      key: "done",
+      name: "Done",
+      tasks: [
+        %{name: "already done task", key: 4}
+      ]
+    }
+  ]
+  def default_columns, do: @default_columns
 
   # Client
 
@@ -63,7 +64,7 @@ defmodule Todo.Storage do
   # Server
 
   def init(:ok) do
-    {:ok, @default_columns}
+    {:ok, default_columns()}
   end
 
   def handle_call({:fetch_tasks}, _from, columns) do
