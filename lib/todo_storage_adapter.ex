@@ -22,4 +22,8 @@ defmodule Todo.Storage.Adapter do
   def delete_tasks() do
     Todo.Storage.delete_tasks(Todo.Storage)
   end
+
+  def delete_task(task_key) do
+    Todo.Storage.delete_task(Todo.Storage, task_key)
+  end
 end

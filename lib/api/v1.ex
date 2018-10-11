@@ -6,18 +6,18 @@ defmodule Todo.API.V1 do
   end
 
   resources "tasks" do
+    ## /tasks ##
+    options do
+    end
+
     ## get all tasks ##
     get do
       json(conn, Todo.Storage.Adapter.fetch_tasks())
     end
 
-    ## get tasks for column ##
-    params do
-      requires(:key, type: String)
-    end
-
-    get ":key" do
-      json(conn, Todo.Storage.Adapter.fetch_tasks(params[:key]))
+    ## delete all tasks ##
+    delete do
+      json(conn, Todo.Storage.Adapter.delete_tasks())
     end
 
     ## create task ##
@@ -31,7 +31,26 @@ defmodule Todo.API.V1 do
       json(conn, :ok)
     end
 
-    options do
+    ## /tasks/:key ##
+    options ":key" do
+    end
+
+    ## get tasks for column ##
+    params do
+      requires(:key, type: String)
+    end
+
+    get ":key" do
+      json(conn, Todo.Storage.Adapter.fetch_tasks(params[:key]))
+    end
+
+    ## delete task ##
+    params do
+      requires(:key, type: String)
+    end
+
+    delete ":key" do
+      json(conn, Todo.Storage.Adapter.delete_task(params[:key]))
     end
 
     ## update task ##
@@ -45,7 +64,8 @@ defmodule Todo.API.V1 do
       json(conn, :ok)
     end
 
-    options ":key" do
+    ## /tasks/:key/move ##
+    options ":key/move" do
     end
 
     ## move task ##
@@ -57,14 +77,6 @@ defmodule Todo.API.V1 do
     post ":key/move" do
       Todo.Storage.Adapter.move_task(params[:key], params[:column_key])
       json(conn, :ok)
-    end
-
-    options ":key/move" do
-    end
-
-    ## delete all tasks ##
-    delete do
-      json(conn, Todo.Storage.Adapter.delete_tasks())
     end
   end
 end

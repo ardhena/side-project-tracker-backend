@@ -31,6 +31,10 @@ defmodule Todo.Storage do
     GenServer.cast(server, {:delete_tasks})
   end
 
+  def delete_task(server, task_key) do
+    GenServer.cast(server, {:delete_task, task_key})
+  end
+
   # Server
 
   def init(:ok) do
@@ -86,7 +90,7 @@ defmodule Todo.Storage do
   end
 
   def handle_cast({:update_task, task_key, task_name}, columns) do
-    with {key, _} = Integer.parse(task_key),
+    with {key, _} <- Integer.parse(task_key),
          {%{} = col, %{} = tsk} <-
            Enum.find(tasks_with_columns(columns), fn {_, tsk} -> tsk.key == key end) do
       collection =
@@ -103,7 +107,7 @@ defmodule Todo.Storage do
   end
 
   def handle_cast({:move_task, task_key, column_key}, columns) do
-    with {key, _} = Integer.parse(task_key),
+    with {key, _} <- Integer.parse(task_key),
          {%{} = col, %{} = tsk} <-
            Enum.find(tasks_with_columns(columns), fn {_, tsk} -> tsk.key == key end) do
       collection =
@@ -122,13 +126,33 @@ defmodule Todo.Storage do
   end
 
   def handle_cast({:delete_tasks}, columns) do
-    colllection =
+    collection =
       columns
       |> Enum.map(fn column ->
         %{column | tasks: []}
       end)
 
-    {:noreply, colllection}
+    {:noreply, collection}
+  end
+
+  def handle_cast({:delete_task, task_key}, columns) do
+    with {key, _} <- Integer.parse(task_key),
+         {%{} = col, %{} = tsk} <-
+           Enum.find(tasks_with_columns(columns), fn {_, tsk} -> tsk.key == key end) do
+      collection =
+        columns
+        |> Enum.map(fn c ->
+          if c.key == col.key do
+            build_column(Enum.reject(c.tasks, fn t -> t.key == tsk.key end), c)
+          else
+            c
+          end
+        end)
+
+      {:noreply, collection}
+    else
+      _ -> {:noreply, columns}
+    end
   end
 
   defp tasks_with_columns(columns) do

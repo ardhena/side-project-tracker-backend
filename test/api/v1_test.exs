@@ -1,5 +1,5 @@
 defmodule Todo.API.V1Test do
-  use ExUnit.Case
+  use ExUnit.Case, async: false
   use Maru.Test
 
   test "GET /api/v1" do
@@ -62,5 +62,9 @@ defmodule Todo.API.V1Test do
 
   test "DELETE /api/v1/tasks" do
     assert delete("/api/v1/tasks") |> json_response == "ok"
+  end
+
+  test "DELETE /api/v1/tasks/:key" do
+    assert delete("/api/v1/tasks/1") |> json_response == "ok"
   end
 end

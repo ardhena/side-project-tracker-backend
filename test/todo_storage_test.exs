@@ -1,5 +1,5 @@
 defmodule Todo.StorageTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
 
   setup do
     storage = start_supervised!(Todo.Storage)
@@ -99,5 +99,18 @@ defmodule Todo.StorageTest do
     assert Todo.Storage.fetch_tasks(storage, "to-do") == []
     assert Todo.Storage.fetch_tasks(storage, "doing") == []
     assert Todo.Storage.fetch_tasks(storage, "done") == []
+  end
+
+  test "delete_task/2", %{storage: storage} do
+    Todo.Storage.delete_task(storage, "1")
+
+    assert Todo.Storage.fetch_tasks(storage) == [
+             %{
+               key: "to-do",
+               tasks: [%{key: 2, name: "another task"}]
+             },
+             %{key: "doing", tasks: [%{key: 3, name: "working on it now"}]},
+             %{key: "done", tasks: [%{key: 4, name: "already done task"}]}
+           ]
   end
 end
