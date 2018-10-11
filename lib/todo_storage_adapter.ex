@@ -18,4 +18,8 @@ defmodule Todo.Storage.Adapter do
   def move_task(task_key, column_key) do
     Todo.Storage.move_task(Todo.Storage, task_key, column_key)
   end
+
+  def delete_tasks() do
+    Todo.Storage.delete_tasks(Todo.Storage)
+  end
 end

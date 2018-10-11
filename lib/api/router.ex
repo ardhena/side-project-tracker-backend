@@ -6,6 +6,7 @@ defmodule Todo.API do
   end
 
   plug(CORSPlug)
+
   plug(
     Plug.Parsers,
     pass: ["*/*"],

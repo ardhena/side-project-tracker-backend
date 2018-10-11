@@ -61,5 +61,10 @@ defmodule Todo.API.V1 do
 
     options ":key/move" do
     end
+
+    ## delete all tasks ##
+    delete do
+      json(conn, Todo.Storage.Adapter.delete_tasks())
+    end
   end
 end

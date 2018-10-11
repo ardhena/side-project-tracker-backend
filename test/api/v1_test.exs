@@ -59,4 +59,8 @@ defmodule Todo.API.V1Test do
            |> post("/api/v1/tasks/1/move")
            |> json_response == "ok"
   end
+
+  test "DELETE /api/v1/tasks" do
+    assert delete("/api/v1/tasks") |> json_response == "ok"
+  end
 end

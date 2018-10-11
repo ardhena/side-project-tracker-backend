@@ -86,4 +86,18 @@ defmodule Todo.StorageTest do
     Todo.Storage.move_task(storage, "3", "doing")
     assert Todo.Storage.fetch_tasks(storage, "doing") == [%{key: 3, name: "working on it now"}]
   end
+
+  test "delete_tasks/1", %{storage: storage} do
+    Todo.Storage.delete_tasks(storage)
+
+    assert Todo.Storage.fetch_tasks(storage) == [
+             %{key: "to-do", tasks: []},
+             %{key: "doing", tasks: []},
+             %{key: "done", tasks: []}
+           ]
+
+    assert Todo.Storage.fetch_tasks(storage, "to-do") == []
+    assert Todo.Storage.fetch_tasks(storage, "doing") == []
+    assert Todo.Storage.fetch_tasks(storage, "done") == []
+  end
 end

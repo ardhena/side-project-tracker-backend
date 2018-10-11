@@ -27,6 +27,10 @@ defmodule Todo.Storage do
     GenServer.cast(server, {:move_task, task_key, column_key})
   end
 
+  def delete_tasks(server) do
+    GenServer.cast(server, {:delete_tasks})
+  end
+
   # Server
 
   def init(:ok) do
@@ -115,6 +119,16 @@ defmodule Todo.Storage do
     else
       _ -> {:noreply, columns}
     end
+  end
+
+  def handle_cast({:delete_tasks}, columns) do
+    colllection =
+      columns
+      |> Enum.map(fn column ->
+        %{column | tasks: []}
+      end)
+
+    {:noreply, colllection}
   end
 
   defp tasks_with_columns(columns) do
