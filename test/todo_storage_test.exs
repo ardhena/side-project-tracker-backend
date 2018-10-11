@@ -10,10 +10,11 @@ defmodule Todo.StorageTest do
     assert Todo.Storage.fetch_tasks(storage) == [
              %{
                key: "to-do",
+               name: "To do",
                tasks: [%{key: 1, name: "some task"}, %{key: 2, name: "another task"}]
              },
-             %{key: "doing", tasks: [%{key: 3, name: "working on it now"}]},
-             %{key: "done", tasks: [%{key: 4, name: "already done task"}]}
+             %{key: "doing", name: "Doing", tasks: [%{key: 3, name: "working on it now"}]},
+             %{key: "done", name: "Done", tasks: [%{key: 4, name: "already done task"}]}
            ]
   end
 
@@ -44,10 +45,11 @@ defmodule Todo.StorageTest do
     assert Todo.Storage.fetch_tasks(storage) == [
              %{
                key: "to-do",
+               name: "To do",
                tasks: [%{key: 1, name: "new task name"}, %{key: 2, name: "another task"}]
              },
-             %{key: "doing", tasks: [%{key: 3, name: "working on it now"}]},
-             %{key: "done", tasks: [%{key: 4, name: "already done task"}]}
+             %{key: "doing", name: "Doing", tasks: [%{key: 3, name: "working on it now"}]},
+             %{key: "done", name: "Done", tasks: [%{key: 4, name: "already done task"}]}
            ]
 
     Todo.Storage.update_task(storage, "2", "another updated name")
@@ -55,10 +57,11 @@ defmodule Todo.StorageTest do
     assert Todo.Storage.fetch_tasks(storage) == [
              %{
                key: "to-do",
+               name: "To do",
                tasks: [%{key: 1, name: "new task name"}, %{key: 2, name: "another updated name"}]
              },
-             %{key: "doing", tasks: [%{key: 3, name: "working on it now"}]},
-             %{key: "done", tasks: [%{key: 4, name: "already done task"}]}
+             %{key: "doing", name: "Doing", tasks: [%{key: 3, name: "working on it now"}]},
+             %{key: "done", name: "Done", tasks: [%{key: 4, name: "already done task"}]}
            ]
 
     Todo.Storage.update_task(storage, "0", "this task does not exist")
@@ -66,10 +69,11 @@ defmodule Todo.StorageTest do
     assert Todo.Storage.fetch_tasks(storage) == [
              %{
                key: "to-do",
+               name: "To do",
                tasks: [%{key: 1, name: "new task name"}, %{key: 2, name: "another updated name"}]
              },
-             %{key: "doing", tasks: [%{key: 3, name: "working on it now"}]},
-             %{key: "done", tasks: [%{key: 4, name: "already done task"}]}
+             %{key: "doing", name: "Doing", tasks: [%{key: 3, name: "working on it now"}]},
+             %{key: "done", name: "Done", tasks: [%{key: 4, name: "already done task"}]}
            ]
   end
 
@@ -91,9 +95,9 @@ defmodule Todo.StorageTest do
     Todo.Storage.delete_tasks(storage)
 
     assert Todo.Storage.fetch_tasks(storage) == [
-             %{key: "to-do", tasks: []},
-             %{key: "doing", tasks: []},
-             %{key: "done", tasks: []}
+             %{key: "to-do", name: "To do", tasks: []},
+             %{key: "doing", name: "Doing", tasks: []},
+             %{key: "done", name: "Done", tasks: []}
            ]
 
     assert Todo.Storage.fetch_tasks(storage, "to-do") == []
@@ -107,10 +111,11 @@ defmodule Todo.StorageTest do
     assert Todo.Storage.fetch_tasks(storage) == [
              %{
                key: "to-do",
+               name: "To do",
                tasks: [%{key: 2, name: "another task"}]
              },
-             %{key: "doing", tasks: [%{key: 3, name: "working on it now"}]},
-             %{key: "done", tasks: [%{key: 4, name: "already done task"}]}
+             %{key: "doing", name: "Doing", tasks: [%{key: 3, name: "working on it now"}]},
+             %{key: "done", name: "Done", tasks: [%{key: 4, name: "already done task"}]}
            ]
   end
 end

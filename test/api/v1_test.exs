@@ -8,16 +8,17 @@ defmodule Todo.API.V1Test do
 
   test "GET /api/v1/tasks" do
     assert get("/api/v1/tasks") |> json_response == [
-             %{"key" => "to-do", "tasks" => [%{"key" => 2, "name" => "another task"}]},
+             %{"key" => "to-do", "name" => "To do", "tasks" => [%{"key" => 2, "name" => "another task"}]},
              %{
                "key" => "doing",
+               "name" => "Doing",
                "tasks" => [
                  %{"key" => 1, "name" => "new name"},
                  %{"key" => 6, "name" => nil},
                  %{"key" => 3, "name" => "working on it now"}
                ]
              },
-             %{"key" => "done", "tasks" => [%{"key" => 4, "name" => "already done task"}]}
+             %{"key" => "done", "name" => "Done", "tasks" => [%{"key" => 4, "name" => "already done task"}]}
            ]
   end
 
