@@ -4,7 +4,7 @@ defmodule Todo.Application do
 
   def start(_type, _args) do
     children = [
-      {Todo.Storage, [name: Todo.Storage]},
+      {Todo.Storage, []},
       {Todo.Server, [name: Todo.Server]}
     ]
 
