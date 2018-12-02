@@ -35,10 +35,14 @@ defmodule Todo.Server do
     GenServer.cast(server, {:delete_task, task_key})
   end
 
+  def break(server) do
+    GenServer.cast(server, {:break})
+  end
+
   # Server
 
   def init(:ok) do
-    {:ok, Todo.Impl.default_columns()}
+    {:ok, Todo.Storage.get()}
   end
 
   def handle_call({:fetch_tasks}, _from, columns) do
@@ -67,5 +71,13 @@ defmodule Todo.Server do
 
   def handle_cast({:delete_task, task_key}, columns) do
     {:noreply, Todo.Impl.delete_task(columns, task_key)}
+  end
+
+  def handle_cast({:break}, columns) do
+    true = false
+  end
+
+  def terminate(_reason, columns) do
+    Todo.Storage.update(columns)
   end
 end

@@ -26,4 +26,8 @@ defmodule Todo do
   def delete_task(task_key) do
     Todo.Server.delete_task(Todo.Server, task_key)
   end
+
+  def break() do
+    Todo.Server.break(Todo.Server)
+  end
 end
