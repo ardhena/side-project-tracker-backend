@@ -9,7 +9,7 @@ defmodule Todo.API.V1Test do
 
   test "GET /api/v1/tasks" do
     with_mocks([
-      {Todo, [:passthrough], [fetch_tasks: fn -> Todo.Server.default_columns() end]}
+      {Todo, [:passthrough], [fetch_tasks: fn -> Todo.Impl.default_columns() end]}
     ]) do
       assert get("/api/v1/tasks") |> json_response == [
                %{
@@ -40,7 +40,7 @@ defmodule Todo.API.V1Test do
        [
          fetch_tasks: fn key ->
            %{tasks: tasks} =
-             Todo.Server.default_columns() |> Enum.find(fn col -> col.key == key end)
+             Todo.Impl.default_columns() |> Enum.find(fn col -> col.key == key end)
 
            tasks
          end
