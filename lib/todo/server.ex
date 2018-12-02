@@ -1,4 +1,4 @@
-defmodule Todo.Storage do
+defmodule Todo.Server do
   use GenServer
 
   @default_columns [
