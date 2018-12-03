@@ -1,4 +1,4 @@
-defmodule Todo.API.V1Test do
+defmodule SideProjectTracker.API.V1Test do
   use ExUnit.Case, async: false
   use Maru.Test
   import Mock
@@ -9,7 +9,7 @@ defmodule Todo.API.V1Test do
 
   test "GET /api/v1/tasks" do
     with_mocks([
-      {Todo, [:passthrough], [fetch_tasks: fn -> Todo.Impl.default_columns() end]}
+      {SideProjectTracker, [:passthrough], [fetch_tasks: fn -> SideProjectTracker.Impl.default_columns() end]}
     ]) do
       assert get("/api/v1/tasks") |> json_response == [
                %{
@@ -36,11 +36,11 @@ defmodule Todo.API.V1Test do
 
   test "GET /api/v1/tasks/:column_key" do
     with_mocks([
-      {Todo, [:passthrough],
+      {SideProjectTracker, [:passthrough],
        [
          fetch_tasks: fn key ->
            %{tasks: tasks} =
-             Todo.Impl.default_columns() |> Enum.find(fn col -> col.key == key end)
+             SideProjectTracker.Impl.default_columns() |> Enum.find(fn col -> col.key == key end)
 
            tasks
          end

@@ -1,4 +1,4 @@
-defmodule Todo.Impl do
+defmodule SideProjectTracker.Impl do
   @default_columns [
     %{
       key: "to-do",

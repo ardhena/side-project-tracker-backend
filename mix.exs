@@ -1,9 +1,9 @@
-defmodule Todo.MixProject do
+defmodule SideProjectTracker.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :todo,
+      app: :side_project_tracker,
       version: "0.1.0",
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
@@ -15,7 +15,7 @@ defmodule Todo.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {Todo.Application, []}
+      mod: {SideProjectTracker.Application, []}
     ]
   end
 

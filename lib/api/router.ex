@@ -1,4 +1,4 @@
-defmodule Todo.API do
+defmodule SideProjectTracker.API do
   use Maru.Router
 
   before do
@@ -16,7 +16,7 @@ defmodule Todo.API do
 
   namespace :api do
     namespace :v1 do
-      mount(Todo.API.V1)
+      mount(SideProjectTracker.API.V1)
     end
   end
 

@@ -1,4 +1,4 @@
-defmodule Todo.Server do
+defmodule SideProjectTracker.Server do
   use GenServer
 
   # Client
@@ -42,35 +42,35 @@ defmodule Todo.Server do
   # Server
 
   def init(:ok) do
-    {:ok, Todo.Storage.get()}
+    {:ok, SideProjectTracker.Storage.get()}
   end
 
   def handle_call({:fetch_tasks}, _from, columns) do
-    {:reply, Todo.Impl.get_all_columns(columns), columns}
+    {:reply, SideProjectTracker.Impl.get_all_columns(columns), columns}
   end
 
   def handle_call({:fetch_tasks, column_key}, _from, columns) do
-    {:reply, Todo.Impl.get_tasks_from_column(columns, column_key), columns}
+    {:reply, SideProjectTracker.Impl.get_tasks_from_column(columns, column_key), columns}
   end
 
   def handle_cast({:create_task, task_key, column_key}, columns) do
-    {:noreply, Todo.Impl.create_task_in_column(columns, task_key, column_key)}
+    {:noreply, SideProjectTracker.Impl.create_task_in_column(columns, task_key, column_key)}
   end
 
   def handle_cast({:update_task, task_key, new_task_name}, columns) do
-    {:noreply, Todo.Impl.update_task(columns, task_key, new_task_name)}
+    {:noreply, SideProjectTracker.Impl.update_task(columns, task_key, new_task_name)}
   end
 
   def handle_cast({:move_task, task_key, column_key}, columns) do
-    {:noreply, Todo.Impl.move_task_to_column(columns, task_key, column_key)}
+    {:noreply, SideProjectTracker.Impl.move_task_to_column(columns, task_key, column_key)}
   end
 
   def handle_cast({:delete_tasks}, columns) do
-    {:noreply, Todo.Impl.delete_all_tasks(columns)}
+    {:noreply, SideProjectTracker.Impl.delete_all_tasks(columns)}
   end
 
   def handle_cast({:delete_task, task_key}, columns) do
-    {:noreply, Todo.Impl.delete_task(columns, task_key)}
+    {:noreply, SideProjectTracker.Impl.delete_task(columns, task_key)}
   end
 
   def handle_cast({:break}, columns) do
@@ -78,6 +78,6 @@ defmodule Todo.Server do
   end
 
   def terminate(_reason, columns) do
-    Todo.Storage.update(columns)
+    SideProjectTracker.Storage.update(columns)
   end
 end

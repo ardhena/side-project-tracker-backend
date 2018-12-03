@@ -1,8 +1,8 @@
-defmodule Todo.Storage do
+defmodule SideProjectTracker.Storage do
   use Agent
 
   def start_link(_) do
-    Agent.start_link(fn -> Todo.Impl.default_columns() end, name: __MODULE__)
+    Agent.start_link(fn -> SideProjectTracker.Impl.default_columns() end, name: __MODULE__)
   end
 
   def get() do

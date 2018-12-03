@@ -2,4 +2,4 @@
 # and its dependencies with the aid of the Mix.Config module.
 use Mix.Config
 
-config :maru, Todo.API, http: [port: 8800]
+config :maru, SideProjectTracker.API, http: [port: 8800]

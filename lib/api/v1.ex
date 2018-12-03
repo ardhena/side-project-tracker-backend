@@ -1,4 +1,4 @@
-defmodule Todo.API.V1 do
+defmodule SideProjectTracker.API.V1 do
   use Maru.Router
 
   get do
@@ -12,12 +12,12 @@ defmodule Todo.API.V1 do
 
     ## get all tasks ##
     get do
-      json(conn, Todo.fetch_tasks())
+      json(conn, SideProjectTracker.fetch_tasks())
     end
 
     ## delete all tasks ##
     delete do
-      json(conn, Todo.delete_tasks())
+      json(conn, SideProjectTracker.delete_tasks())
     end
 
     ## create task ##
@@ -27,7 +27,7 @@ defmodule Todo.API.V1 do
     end
 
     post do
-      Todo.create_task(params[:task_key], params[:column_key])
+      SideProjectTracker.create_task(params[:task_key], params[:column_key])
       json(conn, :ok)
     end
 
@@ -41,7 +41,7 @@ defmodule Todo.API.V1 do
     end
 
     get ":key" do
-      json(conn, Todo.fetch_tasks(params[:key]))
+      json(conn, SideProjectTracker.fetch_tasks(params[:key]))
     end
 
     ## delete task ##
@@ -50,7 +50,7 @@ defmodule Todo.API.V1 do
     end
 
     delete ":key" do
-      json(conn, Todo.delete_task(params[:key]))
+      json(conn, SideProjectTracker.delete_task(params[:key]))
     end
 
     ## update task ##
@@ -60,7 +60,7 @@ defmodule Todo.API.V1 do
     end
 
     put ":key" do
-      Todo.update_task(params[:key], params[:task_name])
+      SideProjectTracker.update_task(params[:key], params[:task_name])
       json(conn, :ok)
     end
 
@@ -75,7 +75,7 @@ defmodule Todo.API.V1 do
     end
 
     post ":key/move" do
-      Todo.move_task(params[:key], params[:column_key])
+      SideProjectTracker.move_task(params[:key], params[:column_key])
       json(conn, :ok)
     end
   end
