@@ -3,10 +3,6 @@ defmodule SideProjectTracker do
     SideProjectTracker.Server.fetch_tasks(SideProjectTracker.Server)
   end
 
-  def fetch_tasks(column_key) do
-    SideProjectTracker.Server.fetch_tasks(SideProjectTracker.Server, column_key)
-  end
-
   def create_task(task_key, column_key) do
     SideProjectTracker.Server.create_task(SideProjectTracker.Server, task_key, column_key)
   end
@@ -25,9 +21,5 @@ defmodule SideProjectTracker do
 
   def delete_task(task_key) do
     SideProjectTracker.Server.delete_task(SideProjectTracker.Server, task_key)
-  end
-
-  def break() do
-    SideProjectTracker.Server.break(SideProjectTracker.Server)
   end
 end

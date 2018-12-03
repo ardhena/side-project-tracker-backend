@@ -1,121 +1,137 @@
 defmodule SideProjectTracker.ServerTest do
   use ExUnit.Case, async: false
 
+  def assert_task_in_column(columns, task, column_key) do
+    assert task in Enum.find(columns, fn %{key: key} -> key == column_key end).tasks
+    columns
+  end
+
+  def assert_task_not_in_column(columns, task, column_key) do
+    assert task not in Enum.find(columns, fn %{key: key} -> key == column_key end).tasks
+    columns
+  end
+
+  def assert_equal_agent_storage(columns) do
+    assert columns == SideProjectTracker.Storage.get()
+  end
+
   setup do
-    storage = start_supervised!(SideProjectTracker.Server)
-    %{storage: storage}
+    SideProjectTracker.Storage.update(SideProjectTracker.Impl.default_columns())
+    {:ok, pid} = GenServer.start_link(SideProjectTracker.Server, :ok, [])
+    %{server: pid}
   end
 
-  test "fetch_tasks/1", %{storage: storage} do
-    assert SideProjectTracker.Server.fetch_tasks(storage) == [
-             %{
-               key: "to-do",
-               name: "To do",
-               tasks: [%{key: 1, name: "some task"}, %{key: 2, name: "another task"}]
-             },
-             %{key: "doing", name: "Doing", tasks: [%{key: 3, name: "working on it now"}]},
-             %{key: "done", name: "Done", tasks: [%{key: 4, name: "already done task"}]}
-           ]
+  describe "fetch_tasks/1" do
+    test "returns tasks from genserver storage", %{server: server} do
+      assert SideProjectTracker.Server.fetch_tasks(server) == [
+               %{
+                 key: "to-do",
+                 name: "To do",
+                 tasks: [%{key: 1, name: "some task"}, %{key: 2, name: "another task"}]
+               },
+               %{key: "doing", name: "Doing", tasks: [%{key: 3, name: "working on it now"}]},
+               %{key: "done", name: "Done", tasks: [%{key: 4, name: "already done task"}]}
+             ]
+
+      GenServer.stop(server)
+    end
   end
 
-  test "fetch_tasks/2", %{storage: storage} do
-    assert SideProjectTracker.Server.fetch_tasks(storage, "to-do") == [
-             %{key: 1, name: "some task"},
-             %{key: 2, name: "another task"}
-           ]
+  describe "create_task/3" do
+    test "creates task in genserver storage and storage agent", %{server: server} do
+      assert SideProjectTracker.Server.create_task(server, "6", "to-do") == :ok
 
-    assert SideProjectTracker.Server.fetch_tasks(storage, "doing") == [%{key: 3, name: "working on it now"}]
-    assert SideProjectTracker.Server.fetch_tasks(storage, "done") == [%{key: 4, name: "already done task"}]
-    assert SideProjectTracker.Server.fetch_tasks(storage, "nonexistingcolumnkey") == []
+      server
+      |> SideProjectTracker.Server.fetch_tasks()
+      |> assert_task_in_column(%{key: 6, name: nil}, "to-do")
+      |> assert_equal_agent_storage()
+
+      GenServer.stop(server)
+    end
   end
 
-  test "create_task/3", %{storage: storage} do
-    SideProjectTracker.Server.create_task(storage, "6", "to-do")
+  describe "update_task/3" do
+    test "updates task in genserver storage and storage agent", %{server: server} do
+      assert SideProjectTracker.Server.update_task(server, "1", "new task name") == :ok
 
-    assert SideProjectTracker.Server.fetch_tasks(storage, "to-do") == [
-             %{key: 6, name: nil},
-             %{key: 1, name: "some task"},
-             %{key: 2, name: "another task"}
-           ]
+      server
+      |> SideProjectTracker.Server.fetch_tasks()
+      |> assert_task_in_column(%{key: 1, name: "new task name"}, "to-do")
+      |> assert_task_not_in_column(%{key: 1, name: "some task"}, "to-do")
+      |> assert_equal_agent_storage()
+
+      assert SideProjectTracker.Server.update_task(server, "2", "another updated name") == :ok
+
+      server
+      |> SideProjectTracker.Server.fetch_tasks()
+      |> assert_task_in_column(%{key: 2, name: "another updated name"}, "to-do")
+      |> assert_task_not_in_column(%{key: 2, name: "another task"}, "to-do")
+      |> assert_equal_agent_storage()
+
+      assert SideProjectTracker.Server.update_task(server, "0", "this task does not exist") == :ok
+
+      server
+      |> SideProjectTracker.Server.fetch_tasks()
+      |> assert_task_not_in_column(%{key: 0, name: "this task does not exist"}, "to-do")
+      |> assert_task_not_in_column(%{key: 0, name: "this task does not exist"}, "doing")
+      |> assert_task_not_in_column(%{key: 0, name: "this task does not exist"}, "done")
+      |> assert_equal_agent_storage()
+
+      GenServer.stop(server)
+    end
   end
 
-  test "update_task/3", %{storage: storage} do
-    SideProjectTracker.Server.update_task(storage, "1", "new task name")
+  describe "move_task/3" do
+    test "moves task in genserver storage and storage agent", %{server: server} do
+      assert SideProjectTracker.Server.move_task(server, "1", "done") == :ok
 
-    assert SideProjectTracker.Server.fetch_tasks(storage) == [
-             %{
-               key: "to-do",
-               name: "To do",
-               tasks: [%{key: 1, name: "new task name"}, %{key: 2, name: "another task"}]
-             },
-             %{key: "doing", name: "Doing", tasks: [%{key: 3, name: "working on it now"}]},
-             %{key: "done", name: "Done", tasks: [%{key: 4, name: "already done task"}]}
-           ]
+      server
+      |> SideProjectTracker.Server.fetch_tasks()
+      |> assert_task_not_in_column(%{key: 1, name: "some task"}, "to-do")
+      |> assert_task_in_column(%{key: 1, name: "some task"}, "done")
+      |> assert_equal_agent_storage()
 
-    SideProjectTracker.Server.update_task(storage, "2", "another updated name")
+      assert SideProjectTracker.Server.move_task(server, "3", "doing") == :ok
 
-    assert SideProjectTracker.Server.fetch_tasks(storage) == [
-             %{
-               key: "to-do",
-               name: "To do",
-               tasks: [%{key: 1, name: "new task name"}, %{key: 2, name: "another updated name"}]
-             },
-             %{key: "doing", name: "Doing", tasks: [%{key: 3, name: "working on it now"}]},
-             %{key: "done", name: "Done", tasks: [%{key: 4, name: "already done task"}]}
-           ]
+      server
+      |> SideProjectTracker.Server.fetch_tasks()
+      |> assert_task_in_column(%{key: 3, name: "working on it now"}, "doing")
+      |> assert_equal_agent_storage()
 
-    SideProjectTracker.Server.update_task(storage, "0", "this task does not exist")
-
-    assert SideProjectTracker.Server.fetch_tasks(storage) == [
-             %{
-               key: "to-do",
-               name: "To do",
-               tasks: [%{key: 1, name: "new task name"}, %{key: 2, name: "another updated name"}]
-             },
-             %{key: "doing", name: "Doing", tasks: [%{key: 3, name: "working on it now"}]},
-             %{key: "done", name: "Done", tasks: [%{key: 4, name: "already done task"}]}
-           ]
+      GenServer.stop(server)
+    end
   end
 
-  test "move_task/3", %{storage: storage} do
-    SideProjectTracker.Server.move_task(storage, "1", "done")
+  describe "delete_tasks/1" do
+    test "deletes all tasks from genserver storage and storage agent", %{server: server} do
+      assert SideProjectTracker.Server.delete_tasks(server) == :ok
 
-    assert SideProjectTracker.Server.fetch_tasks(storage, "to-do") == [%{key: 2, name: "another task"}]
+      data = SideProjectTracker.Server.fetch_tasks(server)
 
-    assert SideProjectTracker.Server.fetch_tasks(storage, "done") == [
-             %{key: 1, name: "some task"},
-             %{key: 4, name: "already done task"}
-           ]
+      assert data == [
+               %{key: "to-do", name: "To do", tasks: []},
+               %{key: "doing", name: "Doing", tasks: []},
+               %{key: "done", name: "Done", tasks: []}
+             ]
 
-    SideProjectTracker.Server.move_task(storage, "3", "doing")
-    assert SideProjectTracker.Server.fetch_tasks(storage, "doing") == [%{key: 3, name: "working on it now"}]
+      assert_equal_agent_storage(data)
+
+      GenServer.stop(server)
+    end
   end
 
-  test "delete_tasks/1", %{storage: storage} do
-    SideProjectTracker.Server.delete_tasks(storage)
+  describe "delete_task/2" do
+    test "deletes one task from genserver storage and storage agent", %{server: server} do
+      assert SideProjectTracker.Server.delete_task(server, "1") == :ok
 
-    assert SideProjectTracker.Server.fetch_tasks(storage) == [
-             %{key: "to-do", name: "To do", tasks: []},
-             %{key: "doing", name: "Doing", tasks: []},
-             %{key: "done", name: "Done", tasks: []}
-           ]
+      server
+      |> SideProjectTracker.Server.fetch_tasks()
+      |> assert_task_not_in_column(%{key: 1, name: "some task"}, "to-do")
+      |> assert_task_not_in_column(%{key: 1, name: "some task"}, "doing")
+      |> assert_task_not_in_column(%{key: 1, name: "some task"}, "done")
+      |> assert_equal_agent_storage()
 
-    assert SideProjectTracker.Server.fetch_tasks(storage, "to-do") == []
-    assert SideProjectTracker.Server.fetch_tasks(storage, "doing") == []
-    assert SideProjectTracker.Server.fetch_tasks(storage, "done") == []
-  end
-
-  test "delete_task/2", %{storage: storage} do
-    SideProjectTracker.Server.delete_task(storage, "1")
-
-    assert SideProjectTracker.Server.fetch_tasks(storage) == [
-             %{
-               key: "to-do",
-               name: "To do",
-               tasks: [%{key: 2, name: "another task"}]
-             },
-             %{key: "doing", name: "Doing", tasks: [%{key: 3, name: "working on it now"}]},
-             %{key: "done", name: "Done", tasks: [%{key: 4, name: "already done task"}]}
-           ]
+      GenServer.stop(server)
+    end
   end
 end

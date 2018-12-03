@@ -28,13 +28,6 @@ defmodule SideProjectTracker.Impl do
 
   def get_all_columns(columns), do: columns
 
-  def get_tasks_from_column(columns, column_key) do
-    case Enum.find(columns, fn col -> col.key == column_key end) do
-      %{tasks: tasks} -> tasks
-      nil -> []
-    end
-  end
-
   def create_task_in_column(columns, task_key, column_key) do
     with %{} = col <- Enum.find(columns, fn col -> col.key == column_key end),
          {key, _} = Integer.parse(task_key) do

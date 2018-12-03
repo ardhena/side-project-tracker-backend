@@ -1,8 +1,8 @@
 defmodule SideProjectTracker.Storage do
   use Agent
 
-  def start_link(_) do
-    Agent.start_link(fn -> SideProjectTracker.Impl.default_columns() end, name: __MODULE__)
+  def start_link(opts) do
+    Agent.start_link(fn -> SideProjectTracker.Impl.default_columns() end, opts)
   end
 
   def get() do

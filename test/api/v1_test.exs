@@ -9,7 +9,8 @@ defmodule SideProjectTracker.API.V1Test do
 
   test "GET /api/v1/tasks" do
     with_mocks([
-      {SideProjectTracker, [:passthrough], [fetch_tasks: fn -> SideProjectTracker.Impl.default_columns() end]}
+      {SideProjectTracker, [:passthrough],
+       [fetch_tasks: fn -> SideProjectTracker.Impl.default_columns() end]}
     ]) do
       assert get("/api/v1/tasks") |> json_response == [
                %{
@@ -34,24 +35,6 @@ defmodule SideProjectTracker.API.V1Test do
     end
   end
 
-  test "GET /api/v1/tasks/:column_key" do
-    with_mocks([
-      {SideProjectTracker, [:passthrough],
-       [
-         fetch_tasks: fn key ->
-           %{tasks: tasks} =
-             SideProjectTracker.Impl.default_columns() |> Enum.find(fn col -> col.key == key end)
-
-           tasks
-         end
-       ]}
-    ]) do
-      assert get("/api/v1/tasks/done") |> json_response == [
-               %{"key" => 4, "name" => "already done task"}
-             ]
-    end
-  end
-
   test "POST /api/v1/tasks/:key" do
     assert post("/api/v1/tasks") |> json_response == %{
              "code" => 400,
@@ -64,15 +47,15 @@ defmodule SideProjectTracker.API.V1Test do
            |> json_response == "ok"
   end
 
-  test "PUT /api/v1/tasks/:key" do
-    assert put("/api/v1/tasks/1") |> json_response == %{
+  test "PATCH /api/v1/tasks/:key" do
+    assert patch("/api/v1/tasks/1") |> json_response == %{
              "code" => 400,
              "message" => "Bad Request"
            }
 
     assert build_conn()
            |> put_body_or_params(%{task_name: "new name"})
-           |> put("/api/v1/tasks/1")
+           |> patch("/api/v1/tasks/1")
            |> json_response == "ok"
   end
 

@@ -4,7 +4,7 @@ defmodule SideProjectTracker.Application do
 
   def start(_type, _args) do
     children = [
-      {SideProjectTracker.Storage, []},
+      {SideProjectTracker.Storage, [name: SideProjectTracker.Storage]},
       {SideProjectTracker.Server, [name: SideProjectTracker.Server]}
     ]
 
