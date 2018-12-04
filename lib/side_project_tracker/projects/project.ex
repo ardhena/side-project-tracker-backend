@@ -1,29 +1,35 @@
 defmodule SideProjectTracker.Projects.Project do
   alias SideProjectTracker.Projects.{Column, Task}
+
   defstruct [:columns, :tasks]
 
   def new() do
     %__MODULE__{
       columns: Column.all(),
       tasks: [
-        Task.new(:todo, :"1", "some task"),
-        Task.new(:todo, :"2", "another task"),
-        Task.new(:doing, :"3", "working on it now"),
-        Task.new(:done, :"4", "already done task")
+        Task.new(:todo, "1", "some task"),
+        Task.new(:todo, "2", "another task"),
+        Task.new(:doing, "3", "working on it now"),
+        Task.new(:done, "4", "already done task")
       ]
+    }
+  end
+
+  def new(%{"columns" => columns, "tasks" => tasks}) do
+    %__MODULE__{
+      columns: columns |> Enum.map(&Column.new(&1)),
+      tasks: tasks |> Enum.map(&Task.new(&1)),
     }
   end
 
   def put(%__MODULE__{} = project, :tasks, tasks), do: %__MODULE__{project | tasks: tasks}
 
-  def add_task_to_column(%__MODULE__{tasks: tasks} = project, task_key, column_key)
-      when is_atom(task_key) and is_atom(column_key) do
+  def add_task_to_column(%__MODULE__{tasks: tasks} = project, task_key, column_key) do
     project
     |> put(:tasks, [Task.new(column_key, task_key, nil) | tasks])
   end
 
-  def update_task(%__MODULE__{tasks: tasks} = project, task_key, task_name)
-      when is_atom(task_key) do
+  def update_task(%__MODULE__{tasks: tasks} = project, task_key, task_name) do
     project
     |> put(
       :tasks,
@@ -33,13 +39,12 @@ defmodule SideProjectTracker.Projects.Project do
     )
   end
 
-  def delete_task(%__MODULE__{tasks: tasks} = project, task_key) when is_atom(task_key) do
+  def delete_task(%__MODULE__{tasks: tasks} = project, task_key) do
     project
     |> put(:tasks, Enum.reject(tasks, fn %Task{key: key} -> key == task_key end))
   end
 
-  def move_task_to_column(%__MODULE__{tasks: tasks} = project, task_key, column_key)
-      when is_atom(task_key) and is_atom(column_key) do
+  def move_task_to_column(%__MODULE__{tasks: tasks} = project, task_key, column_key) do
     project
     |> put(
       :tasks,

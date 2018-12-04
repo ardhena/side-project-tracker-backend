@@ -9,35 +9,35 @@ defmodule SideProjectTracker.Server do
     GenServer.start_link(__MODULE__, :ok, opts)
   end
 
-  def fetch_tasks(server) do
+  def fetch_tasks(server \\ __MODULE__) do
     GenServer.call(server, {:fetch_tasks})
   end
 
-  def create_task(server, task_key, column_key) do
+  def create_task(server \\ __MODULE__, task_key, column_key) do
     server
     |> GenServer.call({:create_task, task_key, column_key})
     |> SideProjectTracker.Storage.update()
   end
 
-  def update_task(server, task_key, task_name) do
+  def update_task(server \\ __MODULE__, task_key, task_name) do
     server
     |> GenServer.call({:update_task, task_key, task_name})
     |> SideProjectTracker.Storage.update()
   end
 
-  def move_task(server, task_key, column_key) do
+  def move_task(server \\ __MODULE__, task_key, column_key) do
     server
     |> GenServer.call({:move_task, task_key, column_key})
     |> SideProjectTracker.Storage.update()
   end
 
-  def delete_tasks(server) do
+  def delete_tasks(server \\ __MODULE__) do
     server
     |> GenServer.call({:delete_tasks})
     |> SideProjectTracker.Storage.update()
   end
 
-  def delete_task(server, task_key) do
+  def delete_task(server \\ __MODULE__, task_key) do
     server
     |> GenServer.call({:delete_task, task_key})
     |> SideProjectTracker.Storage.update()

@@ -12,10 +12,10 @@ defmodule SideProjectTracker.Projects.ProjectTest do
                  %Column{key: :done, name: "Done"}
                ],
                tasks: [
-                 %Task{column_key: :todo, key: :"1", name: "some task"},
-                 %Task{column_key: :todo, key: :"2", name: "another task"},
-                 %Task{column_key: :doing, key: :"3", name: "working on it now"},
-                 %Task{column_key: :done, key: :"4", name: "already done task"}
+                 %Task{column_key: :todo, key: "1", name: "some task"},
+                 %Task{column_key: :todo, key: "2", name: "another task"},
+                 %Task{column_key: :doing, key: "3", name: "working on it now"},
+                 %Task{column_key: :done, key: "4", name: "already done task"}
                ]
              }
     end
@@ -33,12 +33,12 @@ defmodule SideProjectTracker.Projects.ProjectTest do
     test "adds new task to list of tasks" do
       project = Project.new()
 
-      assert Project.add_task_to_column(project, :"5", :todo).tasks == [
-               %Task{column_key: :todo, key: :"5", name: nil},
-               %Task{column_key: :todo, key: :"1", name: "some task"},
-               %Task{column_key: :todo, key: :"2", name: "another task"},
-               %Task{column_key: :doing, key: :"3", name: "working on it now"},
-               %Task{column_key: :done, key: :"4", name: "already done task"}
+      assert Project.add_task_to_column(project, "5", :todo).tasks == [
+               %Task{column_key: :todo, key: "5", name: nil},
+               %Task{column_key: :todo, key: "1", name: "some task"},
+               %Task{column_key: :todo, key: "2", name: "another task"},
+               %Task{column_key: :doing, key: "3", name: "working on it now"},
+               %Task{column_key: :done, key: "4", name: "already done task"}
              ]
     end
   end
@@ -47,11 +47,11 @@ defmodule SideProjectTracker.Projects.ProjectTest do
     test "updates task name in list of tasks" do
       project = Project.new()
 
-      assert Project.update_task(project, :"4", "new name").tasks == [
-               %Task{column_key: :todo, key: :"1", name: "some task"},
-               %Task{column_key: :todo, key: :"2", name: "another task"},
-               %Task{column_key: :doing, key: :"3", name: "working on it now"},
-               %Task{column_key: :done, key: :"4", name: "new name"}
+      assert Project.update_task(project, "4", "new name").tasks == [
+               %Task{column_key: :todo, key: "1", name: "some task"},
+               %Task{column_key: :todo, key: "2", name: "another task"},
+               %Task{column_key: :doing, key: "3", name: "working on it now"},
+               %Task{column_key: :done, key: "4", name: "new name"}
              ]
     end
   end
@@ -60,10 +60,10 @@ defmodule SideProjectTracker.Projects.ProjectTest do
     test "removes task from list of tasks" do
       project = Project.new()
 
-      assert Project.delete_task(project, :"3").tasks == [
-               %Task{column_key: :todo, key: :"1", name: "some task"},
-               %Task{column_key: :todo, key: :"2", name: "another task"},
-               %Task{column_key: :done, key: :"4", name: "already done task"}
+      assert Project.delete_task(project, "3").tasks == [
+               %Task{column_key: :todo, key: "1", name: "some task"},
+               %Task{column_key: :todo, key: "2", name: "another task"},
+               %Task{column_key: :done, key: "4", name: "already done task"}
              ]
     end
   end
@@ -72,11 +72,11 @@ defmodule SideProjectTracker.Projects.ProjectTest do
     test "updates task column key in list of tasks" do
       project = Project.new()
 
-      assert Project.move_task_to_column(project, :"2", :doing).tasks == [
-               %Task{column_key: :todo, key: :"1", name: "some task"},
-               %Task{column_key: :doing, key: :"2", name: "another task"},
-               %Task{column_key: :doing, key: :"3", name: "working on it now"},
-               %Task{column_key: :done, key: :"4", name: "already done task"}
+      assert Project.move_task_to_column(project, "2", :doing).tasks == [
+               %Task{column_key: :todo, key: "1", name: "some task"},
+               %Task{column_key: :doing, key: "2", name: "another task"},
+               %Task{column_key: :doing, key: "3", name: "working on it now"},
+               %Task{column_key: :done, key: "4", name: "already done task"}
              ]
     end
   end
@@ -98,22 +98,22 @@ defmodule SideProjectTracker.Projects.ProjectTest do
                  key: :todo,
                  name: "To do",
                  tasks: [
-                   %{name: "some task", key: :"1"},
-                   %{name: "another task", key: :"2"}
+                   %{name: "some task", key: "1"},
+                   %{name: "another task", key: "2"}
                  ]
                },
                %{
                  key: :doing,
                  name: "Doing",
                  tasks: [
-                   %{name: "working on it now", key: :"3"}
+                   %{name: "working on it now", key: "3"}
                  ]
                },
                %{
                  key: :done,
                  name: "Done",
                  tasks: [
-                   %{name: "already done task", key: :"4"}
+                   %{name: "already done task", key: "4"}
                  ]
                }
              ]

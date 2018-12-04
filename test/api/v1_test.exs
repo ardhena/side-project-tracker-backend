@@ -9,13 +9,8 @@ defmodule SideProjectTracker.API.V1Test do
 
   test "GET /api/v1/tasks" do
     with_mocks([
-      {SideProjectTracker, [:passthrough],
-       [
-         fetch_tasks: fn ->
-           SideProjectTracker.Projects.Project.new()
-           |> SideProjectTracker.Projects.Project.to_old_format()
-         end
-       ]}
+      {SideProjectTracker.Server, [:passthrough],
+       [fetch_tasks: fn -> SideProjectTracker.Projects.Project.new() end]}
     ]) do
       assert get("/api/v1/tasks") |> json_response == [
                %{
