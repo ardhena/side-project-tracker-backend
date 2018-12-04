@@ -27,7 +27,13 @@ defmodule SideProjectTracker.API.V1 do
     end
 
     post do
-      json(conn, SideProjectTracker.create_task(params[:task_key], params[:column_key]))
+      json(
+        conn,
+        SideProjectTracker.create_task(
+          String.to_atom(params[:task_key]),
+          String.to_atom(params[:column_key])
+        )
+      )
     end
 
     ## OPTIONS /tasks/:key ##
@@ -40,7 +46,7 @@ defmodule SideProjectTracker.API.V1 do
     end
 
     delete ":key" do
-      json(conn, SideProjectTracker.delete_task(params[:key]))
+      json(conn, SideProjectTracker.delete_task(String.to_atom(params[:key])))
     end
 
     ## PATCH /tasks/:key ##
@@ -50,7 +56,7 @@ defmodule SideProjectTracker.API.V1 do
     end
 
     patch ":key" do
-      json(conn, SideProjectTracker.update_task(params[:key], params[:task_name]))
+      json(conn, SideProjectTracker.update_task(String.to_atom(params[:key]), params[:task_name]))
     end
 
     ## OPTIONS /tasks/:key/move ##
@@ -64,7 +70,13 @@ defmodule SideProjectTracker.API.V1 do
     end
 
     post ":key/move" do
-      json(conn, SideProjectTracker.move_task(params[:key], params[:column_key]))
+      json(
+        conn,
+        SideProjectTracker.move_task(
+          String.to_atom(params[:key]),
+          String.to_atom(params[:column_key])
+        )
+      )
     end
   end
 end

@@ -1,6 +1,8 @@
 defmodule SideProjectTracker.Server do
   use GenServer
 
+  alias SideProjectTracker.Projects.Project
+
   # Client
 
   def start_link(opts) do
@@ -47,36 +49,36 @@ defmodule SideProjectTracker.Server do
     {:ok, SideProjectTracker.Storage.get()}
   end
 
-  def handle_call({:fetch_tasks}, _from, columns) do
-    {:reply, SideProjectTracker.Impl.get_all_columns(columns), columns}
+  def handle_call({:fetch_tasks}, _from, project) do
+    {:reply, project, project}
   end
 
-  def handle_call({:create_task, task_key, column_key}, _from, columns) do
-    new_columns = SideProjectTracker.Impl.create_task_in_column(columns, task_key, column_key)
-    {:reply, new_columns, new_columns}
+  def handle_call({:create_task, task_key, column_key}, _from, project) do
+    updated_project = Project.add_task_to_column(project, task_key, column_key)
+    {:reply, updated_project, updated_project}
   end
 
-  def handle_call({:update_task, task_key, new_task_name}, _from, columns) do
-    new_columns = SideProjectTracker.Impl.update_task(columns, task_key, new_task_name)
-    {:reply, new_columns, new_columns}
+  def handle_call({:update_task, task_key, new_task_name}, _from, project) do
+    updated_project = Project.update_task(project, task_key, new_task_name)
+    {:reply, updated_project, updated_project}
   end
 
-  def handle_call({:move_task, task_key, column_key}, _from, columns) do
-    new_columns = SideProjectTracker.Impl.move_task_to_column(columns, task_key, column_key)
-    {:reply, new_columns, new_columns}
+  def handle_call({:move_task, task_key, column_key}, _from, project) do
+    updated_project = Project.move_task_to_column(project, task_key, column_key)
+    {:reply, updated_project, updated_project}
   end
 
-  def handle_call({:delete_tasks}, _from, columns) do
-    new_columns = SideProjectTracker.Impl.delete_all_tasks(columns)
-    {:reply, new_columns, new_columns}
+  def handle_call({:delete_tasks}, _from, project) do
+    updated_project = Project.delete_all_tasks(project)
+    {:reply, updated_project, updated_project}
   end
 
-  def handle_call({:delete_task, task_key}, _from, columns) do
-    new_columns = SideProjectTracker.Impl.delete_task(columns, task_key)
-    {:reply, new_columns, new_columns}
+  def handle_call({:delete_task, task_key}, _from, project) do
+    updated_project = Project.delete_task(project, task_key)
+    {:reply, updated_project, updated_project}
   end
 
-  def terminate(_reason, columns) do
-    SideProjectTracker.Storage.update(columns)
+  def terminate(_reason, project) do
+    SideProjectTracker.Storage.update(project)
   end
 end

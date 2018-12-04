@@ -5,7 +5,7 @@ defmodule SideProjectTracker.StorageTest do
     test "updates data in agent storage" do
       storage = SideProjectTracker.Storage.get()
 
-      assert is_list(storage)
+      assert is_map(storage)
 
       assert SideProjectTracker.Storage.update([]) == :ok
       assert SideProjectTracker.Storage.get() == []

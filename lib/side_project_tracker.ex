@@ -1,6 +1,8 @@
 defmodule SideProjectTracker do
   def fetch_tasks do
-    SideProjectTracker.Server.fetch_tasks(SideProjectTracker.Server)
+    SideProjectTracker.Server
+    |> SideProjectTracker.Server.fetch_tasks()
+    |> SideProjectTracker.Projects.Project.to_old_format()
   end
 
   def create_task(task_key, column_key) do

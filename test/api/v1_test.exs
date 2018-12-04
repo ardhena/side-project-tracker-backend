@@ -10,26 +10,31 @@ defmodule SideProjectTracker.API.V1Test do
   test "GET /api/v1/tasks" do
     with_mocks([
       {SideProjectTracker, [:passthrough],
-       [fetch_tasks: fn -> SideProjectTracker.Impl.default_columns() end]}
+       [
+         fetch_tasks: fn ->
+           SideProjectTracker.Projects.Project.new()
+           |> SideProjectTracker.Projects.Project.to_old_format()
+         end
+       ]}
     ]) do
       assert get("/api/v1/tasks") |> json_response == [
                %{
-                 "key" => "to-do",
+                 "key" => "todo",
                  "name" => "To do",
                  "tasks" => [
-                   %{"key" => 1, "name" => "some task"},
-                   %{"key" => 2, "name" => "another task"}
+                   %{"key" => "1", "name" => "some task"},
+                   %{"key" => "2", "name" => "another task"}
                  ]
                },
                %{
                  "key" => "doing",
                  "name" => "Doing",
-                 "tasks" => [%{"key" => 3, "name" => "working on it now"}]
+                 "tasks" => [%{"key" => "3", "name" => "working on it now"}]
                },
                %{
                  "key" => "done",
                  "name" => "Done",
-                 "tasks" => [%{"key" => 4, "name" => "already done task"}]
+                 "tasks" => [%{"key" => "4", "name" => "already done task"}]
                }
              ]
     end
