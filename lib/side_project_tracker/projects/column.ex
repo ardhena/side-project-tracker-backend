@@ -1,4 +1,6 @@
 defmodule SideProjectTracker.Projects.Column do
+  @derive Jason.Encoder
+
   defstruct [:key, :name]
 
   def all() do

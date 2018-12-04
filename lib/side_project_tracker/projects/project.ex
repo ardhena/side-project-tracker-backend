@@ -1,6 +1,8 @@
 defmodule SideProjectTracker.Projects.Project do
   alias SideProjectTracker.Projects.{Column, Task}
 
+  @derive Jason.Encoder
+
   defstruct [:columns, :tasks]
 
   def new() do
@@ -18,7 +20,7 @@ defmodule SideProjectTracker.Projects.Project do
   def new(%{"columns" => columns, "tasks" => tasks}) do
     %__MODULE__{
       columns: columns |> Enum.map(&Column.new(&1)),
-      tasks: tasks |> Enum.map(&Task.new(&1)),
+      tasks: tasks |> Enum.map(&Task.new(&1))
     }
   end
 

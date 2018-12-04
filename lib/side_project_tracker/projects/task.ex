@@ -1,4 +1,6 @@
 defmodule SideProjectTracker.Projects.Task do
+  @derive Jason.Encoder
+
   defstruct [:column_key, :key, :name]
 
   def new(column_key, key, name) do
