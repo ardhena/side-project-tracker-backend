@@ -4,8 +4,8 @@ defmodule SideProjectTracker.Application do
 
   def start(_type, _args) do
     children = [
-      {SideProjectTracker.Storage, [name: SideProjectTracker.Storage]},
-      {SideProjectTracker.Server, [name: SideProjectTracker.Server]}
+      {SideProjectTracker.ProjectStorage, [name: SideProjectTracker.ProjectStorage]},
+      {SideProjectTracker.ProjectServer, [name: SideProjectTracker.ProjectServer]}
     ]
 
     Supervisor.start_link(children, name: SideProjectTracker.Supervisor, strategy: :rest_for_one)

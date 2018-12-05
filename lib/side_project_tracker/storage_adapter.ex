@@ -33,10 +33,10 @@ defmodule SideProjectTracker.StorageAdapter do
   def load do
     case File.read(file_path()) do
       {:ok, json} ->
-        {:ok, json |> Jason.decode!() |> Project.new()}
+        json |> Jason.decode!() |> Project.new()
 
-      _ = error ->
-        error
+      {:error, :enoent} ->
+        Project.new()
     end
   end
 

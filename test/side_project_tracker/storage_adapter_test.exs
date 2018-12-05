@@ -21,7 +21,7 @@ defmodule SideProjectTracker.StorageAdapterTest do
       project = SideProjectTracker.Projects.Project.new()
       {:ok, file_path} = SideProjectTracker.StorageAdapter.save(project)
 
-      assert {:ok, project} == SideProjectTracker.StorageAdapter.load()
+      assert project == SideProjectTracker.StorageAdapter.load()
 
       File.rm!(file_path)
     end
