@@ -4,7 +4,7 @@ defmodule SideProjectTracker.MixProject do
   def project do
     [
       app: :side_project_tracker,
-      version: "0.1.0",
+      version: "1.0.0",
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
       deps: deps()
@@ -26,6 +26,7 @@ defmodule SideProjectTracker.MixProject do
       {:cowboy, "~> 2.3"},
       {:jason, "~> 1.0"},
       {:cors_plug, "~> 1.5"},
+      {:distillery, "~> 2.0"},
       {:exsync, "~> 0.2", only: :dev},
       {:mock, "~> 0.3.0", only: :test}
     ]
