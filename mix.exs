@@ -26,7 +26,9 @@ defmodule SideProjectTracker.MixProject do
       {:cowboy, "~> 2.3"},
       {:jason, "~> 1.0"},
       {:cors_plug, "~> 1.5"},
-      {:distillery, "~> 2.0"},
+      {:distillery,
+       git: "https://github.com/ardhena/distillery.git",
+       branch: "fix-loading-pidfile-config-from-vm-args"},
       {:exsync, "~> 0.2", only: :dev},
       {:mock, "~> 0.3.0", only: :test}
     ]
