@@ -47,13 +47,15 @@ defmodule SideProjectTracker.Projects.Project do
   end
 
   def move_task_to_column(%__MODULE__{tasks: tasks} = project, task_key, column_key) do
+    moved_task = %Task{
+      Enum.find(tasks, fn %Task{key: key} -> key == task_key end)
+      | column_key: column_key
+    }
+
+    tasks_without_moved_task = Enum.reject(tasks, fn %Task{key: key} -> key == task_key end)
+
     project
-    |> put(
-      :tasks,
-      update_task_from_collection(tasks, task_key, fn task ->
-        Task.update(task, column_key: column_key)
-      end)
-    )
+    |> put(:tasks, [moved_task | tasks_without_moved_task])
   end
 
   def delete_all_tasks(%__MODULE__{} = project) do

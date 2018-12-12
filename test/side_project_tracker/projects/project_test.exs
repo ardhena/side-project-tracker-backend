@@ -69,12 +69,12 @@ defmodule SideProjectTracker.Projects.ProjectTest do
   end
 
   describe "move_task_to_column/3" do
-    test "updates task column key in list of tasks" do
+    test "updates task column key in list of tasks and moves task to the beginning" do
       project = Project.new()
 
       assert Project.move_task_to_column(project, "2", :doing).tasks == [
-               %Task{column_key: :todo, key: "1", name: "some task"},
                %Task{column_key: :doing, key: "2", name: "another task"},
+               %Task{column_key: :todo, key: "1", name: "some task"},
                %Task{column_key: :doing, key: "3", name: "working on it now"},
                %Task{column_key: :done, key: "4", name: "already done task"}
              ]
