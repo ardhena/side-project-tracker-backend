@@ -7,6 +7,12 @@ defmodule SideProjectTracker.API.V1Test do
     assert get("/api/v1") |> json_response == %{"message" => "API V1"}
   end
 
+  test "GET /api/v1/projects" do
+    assert get("/api/v1/projects") |> json_response == [
+             %{"key" => "default", "name" => "Default"}
+           ]
+  end
+
   test "GET /api/v1/projects/default/tasks" do
     with_mocks([
       {SideProjectTracker.ProjectServer, [:passthrough],

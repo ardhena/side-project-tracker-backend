@@ -6,6 +6,17 @@ defmodule SideProjectTracker.API.V1 do
     json(conn, %{message: "API V1"})
   end
 
+  resources "projects" do
+    ## OPTIONS /projects ##
+    options do
+    end
+
+    ## GET /projects ##
+    get do
+      json(conn, [Project.new() |> Map.from_struct() |> Map.take([:key, :name])])
+    end
+  end
+
   resources "projects/default/tasks" do
     ## OPTIONS /tasks ##
     options do

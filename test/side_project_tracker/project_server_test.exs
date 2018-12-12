@@ -34,6 +34,8 @@ defmodule SideProjectTracker.ProjectServerTest do
   describe "get/1" do
     test "returns tasks from genserver storage", %{server: server} do
       assert SideProjectTracker.ProjectServer.get(server) == %Project{
+               key: "default",
+               name: "Default",
                columns: [
                  %Column{key: :todo, name: "To do"},
                  %Column{key: :doing, name: "Doing"},
@@ -146,6 +148,8 @@ defmodule SideProjectTracker.ProjectServerTest do
       data = SideProjectTracker.ProjectServer.get(server)
 
       assert data == %Project{
+               key: "default",
+               name: "Default",
                columns: [
                  %Column{key: :todo, name: "To do"},
                  %Column{key: :doing, name: "Doing"},
