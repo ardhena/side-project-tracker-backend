@@ -6,7 +6,7 @@ defmodule SideProjectTracker.API.V1 do
     json(conn, %{message: "API V1"})
   end
 
-  resources "tasks" do
+  resources "projects/default/tasks" do
     ## OPTIONS /tasks ##
     options do
     end

@@ -7,12 +7,12 @@ defmodule SideProjectTracker.API.V1Test do
     assert get("/api/v1") |> json_response == %{"message" => "API V1"}
   end
 
-  test "GET /api/v1/tasks" do
+  test "GET /api/v1/projects/default/tasks" do
     with_mocks([
       {SideProjectTracker.ProjectServer, [:passthrough],
        [get: fn -> SideProjectTracker.Projects.Project.new() end]}
     ]) do
-      assert get("/api/v1/tasks") |> json_response == [
+      assert get("/api/v1/projects/default/tasks") |> json_response == [
                %{
                  "key" => "todo",
                  "name" => "To do",
@@ -35,47 +35,47 @@ defmodule SideProjectTracker.API.V1Test do
     end
   end
 
-  test "POST /api/v1/tasks/:key" do
-    assert post("/api/v1/tasks") |> json_response == %{
+  test "POST /api/v1/projects/default/tasks/:key" do
+    assert post("/api/v1/projects/default/tasks") |> json_response == %{
              "code" => 400,
              "message" => "Bad Request"
            }
 
     assert build_conn()
            |> put_body_or_params(%{column_key: "doing", task_key: "6"})
-           |> post("/api/v1/tasks")
+           |> post("/api/v1/projects/default/tasks")
            |> json_response == "ok"
   end
 
-  test "PATCH /api/v1/tasks/:key" do
-    assert patch("/api/v1/tasks/1") |> json_response == %{
+  test "PATCH /api/v1/projects/default/tasks/:key" do
+    assert patch("/api/v1/projects/default/tasks/1") |> json_response == %{
              "code" => 400,
              "message" => "Bad Request"
            }
 
     assert build_conn()
            |> put_body_or_params(%{task_name: "new name"})
-           |> patch("/api/v1/tasks/1")
+           |> patch("/api/v1/projects/default/tasks/1")
            |> json_response == "ok"
   end
 
-  test "POST /api/v1/tasks/:key/move" do
-    assert post("/api/v1/tasks/1/move") |> json_response == %{
+  test "POST /api/v1/projects/default/tasks/:key/move" do
+    assert post("/api/v1/projects/default/tasks/1/move") |> json_response == %{
              "code" => 400,
              "message" => "Bad Request"
            }
 
     assert build_conn()
            |> put_body_or_params(%{column_key: "doing"})
-           |> post("/api/v1/tasks/1/move")
+           |> post("/api/v1/projects/default/tasks/1/move")
            |> json_response == "ok"
   end
 
-  test "DELETE /api/v1/tasks" do
-    assert delete("/api/v1/tasks") |> json_response == "ok"
+  test "DELETE /api/v1/projects/default/tasks" do
+    assert delete("/api/v1/projects/default/tasks") |> json_response == "ok"
   end
 
-  test "DELETE /api/v1/tasks/:key" do
-    assert delete("/api/v1/tasks/1") |> json_response == "ok"
+  test "DELETE /api/v1/projects/default/tasks/:key" do
+    assert delete("/api/v1/projects/default/tasks/1") |> json_response == "ok"
   end
 end
