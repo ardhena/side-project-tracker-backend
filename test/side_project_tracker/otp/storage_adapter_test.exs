@@ -34,12 +34,19 @@ defmodule SideProjectTracker.OTP.StorageAdapterTest do
       assert {:ok, _file_path} = StorageAdapter.save(project)
 
       assert [
-               %SideProjectTracker.Projects.Project{
-                 columns: nil,
-                 key: "default",
-                 tasks: nil
-               }
-             ] = StorageAdapter.list_projects()
+              %SideProjectTracker.Projects.Project{
+                columns: [
+                  %SideProjectTracker.Projects.Column{key: :todo, name: "To do"},
+                  %SideProjectTracker.Projects.Column{
+                    key: :doing,
+                    name: "Doing"
+                  },
+                  %SideProjectTracker.Projects.Column{key: :done, name: "Done"}
+                ],
+                key: "default",
+                tasks: nil
+              }
+            ] = StorageAdapter.list_projects()
     end
   end
 

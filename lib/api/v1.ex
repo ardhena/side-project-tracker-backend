@@ -16,6 +16,15 @@ defmodule SideProjectTracker.API.V1 do
       json(conn, MainServer.get_projects())
     end
 
+    ## POST /projects ##
+    params do
+      requires(:key, type: String)
+    end
+
+    post do
+      json(conn, MainServer.new_project(params[:key]))
+    end
+
     route_param :project_key do
       namespace "tasks" do
         ## OPTIONS /tasks ##

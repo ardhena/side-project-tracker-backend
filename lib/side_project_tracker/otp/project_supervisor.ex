@@ -14,6 +14,11 @@ defmodule SideProjectTracker.OTP.ProjectSupervisor do
     |> Supervisor.init(strategy: :one_for_one)
   end
 
+  def add_child(%Project{} = project) do
+    Supervisor.start_child(__MODULE__, build_child_spec(:storage, project))
+    Supervisor.start_child(__MODULE__, build_child_spec(:server, project))
+  end
+
   defp build_servers_for_project(%Project{} = project) do
     [
       build_child_spec(:storage, project),

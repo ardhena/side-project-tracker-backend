@@ -2,13 +2,16 @@ defmodule SideProjectTracker.API.V1Test do
   use ExUnit.Case, async: false
   use Maru.Test
   import Mock
-  alias SideProjectTracker.{OTP.MainServer, Projects.Project}
+  alias SideProjectTracker.{OTP.MainServer, OTP.StorageAdapter, Projects.Project}
 
   test "GET /api/v1" do
     assert get("/api/v1") |> json_response == %{"message" => "API V1"}
   end
 
   test "GET /api/v1/projects" do
+    project = Project.new()
+    assert {:ok, _file_path} = StorageAdapter.save(project)
+
     assert [
              %{"key" => "default"}
            ] = get("/api/v1/projects") |> json_response

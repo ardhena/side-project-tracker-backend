@@ -18,7 +18,15 @@ defmodule SideProjectTracker.Projects.Project do
     }
   end
 
-  def new(%{key: key}), do: %__MODULE__{key: key}
+  def new(%{key: key}), do: %__MODULE__{key: key, columns: Column.all()}
+
+  def new(%{"key" => key, "columns" => columns, "tasks" => nil}) do
+    %__MODULE__{
+      key: key,
+      columns: columns |> Enum.map(&Column.new(&1)),
+      tasks: []
+    }
+  end
 
   def new(%{"key" => key, "columns" => columns, "tasks" => tasks}) do
     %__MODULE__{
