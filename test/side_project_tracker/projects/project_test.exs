@@ -7,7 +7,6 @@ defmodule SideProjectTracker.Projects.ProjectTest do
     test "returns default project columns and tasks" do
       assert Project.new() == %Project{
                key: "default",
-               name: "Default",
                columns: [
                  %Column{key: :todo, name: "To do"},
                  %Column{key: :doing, name: "Doing"},

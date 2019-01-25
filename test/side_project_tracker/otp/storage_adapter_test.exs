@@ -9,7 +9,7 @@ defmodule SideProjectTracker.OTP.StorageAdapterTest do
       assert {:ok, file_path} = StorageAdapter.save(project)
 
       json =
-        "{\"columns\":[{\"key\":\"todo\",\"name\":\"To do\"},{\"key\":\"doing\",\"name\":\"Doing\"},{\"key\":\"done\",\"name\":\"Done\"}],\"key\":\"default\",\"name\":\"Default\",\"tasks\":[{\"column_key\":\"todo\",\"key\":\"1\",\"name\":\"some task\"},{\"column_key\":\"todo\",\"key\":\"2\",\"name\":\"another task\"},{\"column_key\":\"doing\",\"key\":\"3\",\"name\":\"working on it now\"},{\"column_key\":\"done\",\"key\":\"4\",\"name\":\"already done task\"}]}"
+        "{\"columns\":[{\"key\":\"todo\",\"name\":\"To do\"},{\"key\":\"doing\",\"name\":\"Doing\"},{\"key\":\"done\",\"name\":\"Done\"}],\"key\":\"default\",\"tasks\":[{\"column_key\":\"todo\",\"key\":\"1\",\"name\":\"some task\"},{\"column_key\":\"todo\",\"key\":\"2\",\"name\":\"another task\"},{\"column_key\":\"doing\",\"key\":\"3\",\"name\":\"working on it now\"},{\"column_key\":\"done\",\"key\":\"4\",\"name\":\"already done task\"}]}"
 
       assert {:ok, json} == File.read(file_path)
 
@@ -37,7 +37,6 @@ defmodule SideProjectTracker.OTP.StorageAdapterTest do
                %SideProjectTracker.Projects.Project{
                  columns: nil,
                  key: "default",
-                 name: nil,
                  tasks: nil
                }
              ] = StorageAdapter.list_projects()
@@ -60,7 +59,6 @@ defmodule SideProjectTracker.OTP.StorageAdapterTest do
                    %SideProjectTracker.Projects.Column{key: :done, name: "Done"}
                  ],
                  key: "default",
-                 name: "Default",
                  tasks: [
                    %SideProjectTracker.Projects.Task{
                      column_key: :todo,

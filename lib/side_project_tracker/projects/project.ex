@@ -3,12 +3,11 @@ defmodule SideProjectTracker.Projects.Project do
 
   @derive Jason.Encoder
 
-  defstruct [:key, :name, :columns, :tasks]
+  defstruct [:key, :columns, :tasks]
 
   def new() do
     %__MODULE__{
       key: "default",
-      name: "Default",
       columns: Column.all(),
       tasks: [
         Task.new(:todo, "1", "some task"),
@@ -21,17 +20,16 @@ defmodule SideProjectTracker.Projects.Project do
 
   def new(%{key: key}), do: %__MODULE__{key: key}
 
-  def new(%{"key" => key, "name" => name, "columns" => columns, "tasks" => tasks}) do
+  def new(%{"key" => key, "columns" => columns, "tasks" => tasks}) do
     %__MODULE__{
       key: key,
-      name: name,
       columns: columns |> Enum.map(&Column.new(&1)),
       tasks: tasks |> Enum.map(&Task.new(&1))
     }
   end
 
   def new(%{"columns" => columns, "tasks" => tasks}) do
-    new(%{"key" => "default", "name" => "Default", "columns" => columns, "tasks" => tasks})
+    new(%{"key" => "default", "columns" => columns, "tasks" => tasks})
   end
 
   def put(%__MODULE__{} = project, :tasks, tasks), do: %__MODULE__{project | tasks: tasks}

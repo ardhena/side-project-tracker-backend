@@ -9,9 +9,9 @@ defmodule SideProjectTracker.API.V1Test do
   end
 
   test "GET /api/v1/projects" do
-    assert get("/api/v1/projects") |> json_response == [
-             %{"key" => "default", "name" => "Default"}
-           ]
+    assert [
+             %{"key" => "default"}
+           ] = get("/api/v1/projects") |> json_response
   end
 
   test "GET /api/v1/projects/default/tasks" do

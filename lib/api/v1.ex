@@ -6,90 +6,96 @@ defmodule SideProjectTracker.API.V1 do
     json(conn, %{message: "API V1"})
   end
 
-  resources "projects" do
+  namespace "projects" do
     ## OPTIONS /projects ##
     options do
     end
 
     ## GET /projects ##
     get do
-      json(conn, [Project.new() |> Map.from_struct() |> Map.take([:key, :name])])
-    end
-  end
-
-  params do
-    requires(:project_key, type: String)
-  end
-
-  resources "projects/:project_key/tasks" do
-    ## OPTIONS /tasks ##
-    options do
+      json(conn, MainServer.get_projects())
     end
 
-    ## GET /tasks ##
-    get do
-      json(conn, params[:project_key] |> MainServer.get() |> Project.to_old_format())
-    end
+    route_param :project_key do
+      namespace "tasks" do
+        ## OPTIONS /tasks ##
+        options do
+        end
 
-    ## DELETE /tasks ##
-    delete do
-      json(conn, MainServer.perform(params[:project_key], :delete_tasks, {}))
-    end
+        ## GET /tasks ##
+        get do
+          json(conn, params[:project_key] |> MainServer.get() |> Project.to_old_format())
+        end
 
-    ## POST /tasks ##
-    params do
-      requires(:column_key, type: String)
-      requires(:task_key, type: String)
-    end
+        ## DELETE /tasks ##
+        delete do
+          json(conn, MainServer.perform(params[:project_key], :delete_tasks, {}))
+        end
 
-    post do
-      json(
-        conn,
-        MainServer.perform(params[:project_key], :new_task, {params[:task_key], String.to_atom(params[:column_key])})
-      )
-    end
+        ## POST /tasks ##
+        params do
+          requires(:column_key, type: String)
+          requires(:task_key, type: String)
+        end
 
-    ## OPTIONS /tasks/:key ##
-    options ":key" do
-    end
+        post do
+          json(
+            conn,
+            MainServer.perform(
+              params[:project_key],
+              :new_task,
+              {params[:task_key], String.to_atom(params[:column_key])}
+            )
+          )
+        end
 
-    ## DELETE /tasks/:key ##
-    params do
-      requires(:key, type: String)
-    end
+        ## OPTIONS /tasks/:key ##
+        options ":key" do
+        end
 
-    delete ":key" do
-      json(conn, MainServer.perform(params[:project_key], :delete_task, {params[:key]}))
-    end
+        ## DELETE /tasks/:key ##
+        params do
+          requires(:key, type: String)
+        end
 
-    ## PATCH /tasks/:key ##
-    params do
-      requires(:key, type: String)
-      requires(:task_name, type: String)
-    end
+        delete ":key" do
+          json(conn, MainServer.perform(params[:project_key], :delete_task, {params[:key]}))
+        end
 
-    patch ":key" do
-      json(
-        conn,
-        MainServer.perform(params[:project_key], :update_task, {params[:key], params[:task_name]})
-      )
-    end
+        ## PATCH /tasks/:key ##
+        params do
+          requires(:key, type: String)
+          requires(:task_name, type: String)
+        end
 
-    ## OPTIONS /tasks/:key/move ##
-    options ":key/move" do
-    end
+        patch ":key" do
+          json(
+            conn,
+            MainServer.perform(params[:project_key], :update_task, {params[:key], params[:task_name]})
+          )
+        end
 
-    ## POST /tasks/:key/move ##
-    params do
-      requires(:key, type: String)
-      requires(:column_key, type: String)
-    end
+        ## OPTIONS /tasks/:key/move ##
+        options ":key/move" do
+        end
 
-    post ":key/move" do
-      json(
-        conn,
-        MainServer.perform(params[:project_key], :move_task, {params[:key], String.to_atom(params[:column_key])})
-      )
+        ## POST /tasks/:key/move ##
+        params do
+          requires(:key, type: String)
+          requires(:column_key, type: String)
+        end
+
+        post ":key/move" do
+          json(
+            conn,
+            MainServer.perform(
+              params[:project_key],
+              :move_task,
+              {params[:key], String.to_atom(params[:column_key])}
+            )
+          )
+        end
+      end
     end
   end
 end

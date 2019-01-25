@@ -38,7 +38,6 @@ defmodule SideProjectTracker.OTP.ProjectServerTest do
     test "returns tasks from genserver storage", %{server: server} do
       assert ProjectServer.get(server) == %Project{
                key: "default",
-               name: "Default",
                columns: [
                  %Column{key: :todo, name: "To do"},
                  %Column{key: :doing, name: "Doing"},
@@ -163,7 +162,6 @@ defmodule SideProjectTracker.OTP.ProjectServerTest do
 
       assert data == %Project{
                key: "default",
-               name: "Default",
                columns: [
                  %Column{key: :todo, name: "To do"},
                  %Column{key: :doing, name: "Doing"},
