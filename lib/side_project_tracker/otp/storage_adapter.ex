@@ -1,8 +1,8 @@
 defmodule SideProjectTracker.OTP.StorageAdapter do
   @moduledoc """
-  `StorageAdapter` module takes care of persistence of what `Storage` agent keeps in memory.
-  The project struct is serialized to json during save and parsed from json to struct during
-  load.
+  `StorageAdapter` module takes care of persistence of what single `ProjectStorage` agent keeps
+  in memory. The project struct is serialized to json during save and parsed from json to struct
+  during load.
   """
   alias SideProjectTracker.Projects.Project
 
@@ -15,9 +15,12 @@ defmodule SideProjectTracker.OTP.StorageAdapter do
   def save(%Project{} = project) do
     json = project |> Jason.encode!()
 
-    case File.write(file_path(), json) do
+    project
+    |> file_path()
+    |> File.write(json)
+    |> case do
       :ok ->
-        {:ok, file_path()}
+        {:ok, file_path(project)}
 
       _ = error ->
         error
@@ -29,9 +32,12 @@ defmodule SideProjectTracker.OTP.StorageAdapter do
   Right now every project is loaded from a `defult.json` file. The base path for file is set in
   configuration.
   """
-  @spec load() :: {:ok, Project.t()} | {:error, any()}
-  def load do
-    case File.read(file_path()) do
+  @spec load(project :: Project.t()) :: {:ok, Project.t()} | {:error, any()}
+  def load(%Project{} = project) do
+    project
+    |> file_path()
+    |> File.read()
+    |> case do
       {:ok, json} ->
         json |> Jason.decode!() |> Project.new()
 
@@ -40,5 +46,45 @@ defmodule SideProjectTracker.OTP.StorageAdapter do
     end
   end
 
-  defp file_path, do: Application.get_env(:side_project_tracker, :storage_path) <> "/default.json"
+  @doc """
+  Lists all the projects that have a save file
+  """
+  @spec list_projects() :: list(Project.t())
+  def list_projects do
+    base_path()
+    |> File.ls()
+    |> case do
+      {:ok, files} ->
+        files
+        |> Enum.map(&filter_project(&1))
+        |> Enum.reject(&is_nil(&1))
+
+      _ = error ->
+        error
+    end
+  end
+
+  @doc """
+  Loads all projects
+  """
+  @spec load_projects() :: list(Project.t())
+  def load_projects do
+    list_projects
+    |> Enum.map(&load(&1))
+  end
+
+  defp filter_project(file_name) do
+    file_name
+    |> String.split(".json")
+    |> case do
+      [key, ""] ->
+        Project.new(%{key: key})
+
+      _ ->
+        nil
+    end
+  end
+
+  defp base_path, do: Application.get_env(:side_project_tracker, :storage_path)
+  defp file_path(%Project{key: key}), do: base_path() <> "/#{key}.json"
 end

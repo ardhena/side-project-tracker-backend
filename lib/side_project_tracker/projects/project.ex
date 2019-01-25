@@ -19,6 +19,8 @@ defmodule SideProjectTracker.Projects.Project do
     }
   end
 
+  def new(%{key: key}), do: %__MODULE__{key: key}
+
   def new(%{"key" => key, "name" => name, "columns" => columns, "tasks" => tasks}) do
     %__MODULE__{
       key: key,

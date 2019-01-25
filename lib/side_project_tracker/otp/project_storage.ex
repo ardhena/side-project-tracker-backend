@@ -6,7 +6,7 @@ defmodule SideProjectTracker.OTP.ProjectStorage do
   alias SideProjectTracker.{Projects.Project, OTP.StorageAdapter}
 
   def start_link(opts) do
-    GenServer.start_link(__MODULE__, StorageAdapter.load(), opts)
+    GenServer.start_link(__MODULE__, StorageAdapter.load(%Project{key: "default"}), opts)
   end
 
   # API
