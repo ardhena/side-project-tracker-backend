@@ -1,14 +1,13 @@
 defmodule SideProjectTracker.Application do
   @moduledoc false
   use Application
+  alias SideProjectTracker.OTP.{PeriodicServer, ProjectSupervisor}
 
   def start(_type, _args) do
-    children = [
-      {SideProjectTracker.ProjectStorage, [name: SideProjectTracker.ProjectStorage]},
-      {SideProjectTracker.ProjectServer, [name: SideProjectTracker.ProjectServer]},
-      {SideProjectTracker.PeriodicServer, [name: SideProjectTracker.PeriodicServer]}
+    [
+      {ProjectSupervisor, [name: SideProjectTracker.OTP.ProjectSupervisor]},
+      {PeriodicServer, [name: SideProjectTracker.OTP.PeriodicServer]}
     ]
-
-    Supervisor.start_link(children, name: SideProjectTracker.Supervisor, strategy: :rest_for_one)
+    |> Supervisor.start_link(name: SideProjectTracker.OTP.Supervisor, strategy: :one_for_one)
   end
 end

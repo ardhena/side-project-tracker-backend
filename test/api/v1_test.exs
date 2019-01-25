@@ -2,6 +2,7 @@ defmodule SideProjectTracker.API.V1Test do
   use ExUnit.Case, async: false
   use Maru.Test
   import Mock
+  alias SideProjectTracker.{OTP.ProjectServer, Projects.Project}
 
   test "GET /api/v1" do
     assert get("/api/v1") |> json_response == %{"message" => "API V1"}
@@ -15,8 +16,7 @@ defmodule SideProjectTracker.API.V1Test do
 
   test "GET /api/v1/projects/default/tasks" do
     with_mocks([
-      {SideProjectTracker.ProjectServer, [:passthrough],
-       [get: fn -> SideProjectTracker.Projects.Project.new() end]}
+      {ProjectServer, [:passthrough], [get: fn -> Project.new() end]}
     ]) do
       assert get("/api/v1/projects/default/tasks") |> json_response == [
                %{

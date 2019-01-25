@@ -1,6 +1,6 @@
 defmodule SideProjectTracker.API.V1 do
   use Maru.Router
-  alias SideProjectTracker.{ProjectServer, Projects.Project}
+  alias SideProjectTracker.{OTP.ProjectServer, Projects.Project}
 
   get do
     json(conn, %{message: "API V1"})

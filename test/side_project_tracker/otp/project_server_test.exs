@@ -1,7 +1,8 @@
-defmodule SideProjectTracker.ProjectServerTest do
+defmodule SideProjectTracker.OTP.ProjectServerTest do
   use ExUnit.Case, async: false
 
   alias SideProjectTracker.Projects.{Column, Project, Task}
+  alias SideProjectTracker.OTP.{ProjectServer, ProjectStorage}
 
   def assert_task_in_column(project, %{key: key, name: name}, column_key) do
     assert %Task{} =
@@ -22,18 +23,18 @@ defmodule SideProjectTracker.ProjectServerTest do
   end
 
   def assert_equal_agent_storage(project) do
-    assert project == SideProjectTracker.ProjectStorage.get()
+    assert project == ProjectStorage.get()
   end
 
   setup do
-    SideProjectTracker.ProjectStorage.update(Project.new())
-    {:ok, pid} = GenServer.start_link(SideProjectTracker.ProjectServer, :ok, [])
+    ProjectStorage.update(Project.new())
+    {:ok, pid} = GenServer.start_link(ProjectServer, :ok, [])
     %{server: pid}
   end
 
   describe "get/1" do
     test "returns tasks from genserver storage", %{server: server} do
-      assert SideProjectTracker.ProjectServer.get(server) == %Project{
+      assert ProjectServer.get(server) == %Project{
                key: "default",
                name: "Default",
                columns: [
@@ -55,10 +56,10 @@ defmodule SideProjectTracker.ProjectServerTest do
 
   describe "perform/3" do
     test "new_task - creates task in genserver storage and storage agent", %{server: server} do
-      assert SideProjectTracker.ProjectServer.perform(server, :new_task, {"6", :todo}) == :ok
+      assert ProjectServer.perform(server, :new_task, {"6", :todo}) == :ok
 
       server
-      |> SideProjectTracker.ProjectServer.get()
+      |> ProjectServer.get()
       |> assert_task_in_column(%{key: "6", name: nil}, :todo)
       |> assert_equal_agent_storage()
 
@@ -66,38 +67,38 @@ defmodule SideProjectTracker.ProjectServerTest do
     end
 
     test "update_task - updates task in genserver storage and storage agent", %{server: server} do
-      assert SideProjectTracker.ProjectServer.perform(
+      assert ProjectServer.perform(
                server,
                :update_task,
                {"1", "new task name"}
              ) == :ok
 
       server
-      |> SideProjectTracker.ProjectServer.get()
+      |> ProjectServer.get()
       |> assert_task_in_column(%{key: "1", name: "new task name"}, :todo)
       |> assert_task_not_in_column(%{key: "1", name: "some task"}, :todo)
       |> assert_equal_agent_storage()
 
-      assert SideProjectTracker.ProjectServer.perform(
+      assert ProjectServer.perform(
                server,
                :update_task,
                {"2", "another updated name"}
              ) == :ok
 
       server
-      |> SideProjectTracker.ProjectServer.get()
+      |> ProjectServer.get()
       |> assert_task_in_column(%{key: "2", name: "another updated name"}, :todo)
       |> assert_task_not_in_column(%{key: "2", name: "another task"}, :todo)
       |> assert_equal_agent_storage()
 
-      assert SideProjectTracker.ProjectServer.perform(
+      assert ProjectServer.perform(
                server,
                :update_task,
                {"0", "this task does not exist"}
              ) == :ok
 
       server
-      |> SideProjectTracker.ProjectServer.get()
+      |> ProjectServer.get()
       |> assert_task_not_in_column(%{key: "0", name: "this task does not exist"}, :todo)
       |> assert_task_not_in_column(%{key: "0", name: "this task does not exist"}, :doing)
       |> assert_task_not_in_column(%{key: "0", name: "this task does not exist"}, :done)
@@ -107,18 +108,18 @@ defmodule SideProjectTracker.ProjectServerTest do
     end
 
     test "move_task - moves task in genserver storage and storage agent", %{server: server} do
-      assert SideProjectTracker.ProjectServer.perform(server, :move_task, {"1", :done}) == :ok
+      assert ProjectServer.perform(server, :move_task, {"1", :done}) == :ok
 
       server
-      |> SideProjectTracker.ProjectServer.get()
+      |> ProjectServer.get()
       |> assert_task_not_in_column(%{key: "1", name: "some task"}, :todo)
       |> assert_task_in_column(%{key: "1", name: "some task"}, :done)
       |> assert_equal_agent_storage()
 
-      assert SideProjectTracker.ProjectServer.perform(server, :move_task, {"3", :doing}) == :ok
+      assert ProjectServer.perform(server, :move_task, {"3", :doing}) == :ok
 
       server
-      |> SideProjectTracker.ProjectServer.get()
+      |> ProjectServer.get()
       |> assert_task_in_column(%{key: "3", name: "working on it now"}, :doing)
       |> assert_equal_agent_storage()
 
@@ -128,10 +129,10 @@ defmodule SideProjectTracker.ProjectServerTest do
     test "delete_task - deletes one task from genserver storage and storage agent", %{
       server: server
     } do
-      assert SideProjectTracker.ProjectServer.perform(server, :delete_task, {"1"}) == :ok
+      assert ProjectServer.perform(server, :delete_task, {"1"}) == :ok
 
       server
-      |> SideProjectTracker.ProjectServer.get()
+      |> ProjectServer.get()
       |> assert_task_not_in_column(%{key: "1", name: "some task"}, :todo)
       |> assert_task_not_in_column(%{key: "1", name: "some task"}, :doing)
       |> assert_task_not_in_column(%{key: "1", name: "some task"}, :done)
@@ -143,9 +144,9 @@ defmodule SideProjectTracker.ProjectServerTest do
     test "delete_tasks - deletes all tasks from genserver storage and storage agent", %{
       server: server
     } do
-      assert SideProjectTracker.ProjectServer.perform(server, :delete_tasks, {}) == :ok
+      assert ProjectServer.perform(server, :delete_tasks, {}) == :ok
 
-      data = SideProjectTracker.ProjectServer.get(server)
+      data = ProjectServer.get(server)
 
       assert data == %Project{
                key: "default",

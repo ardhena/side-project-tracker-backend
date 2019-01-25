@@ -1,10 +1,10 @@
-defmodule SideProjectTracker.PeriodicServer do
+defmodule SideProjectTracker.OTP.PeriodicServer do
   @moduledoc """
   `PeriodicServer` module takes care of saving `ProjectServer` state to file via adapter.
   The state is saved every 5 minutes.
   """
   use GenServer
-  alias SideProjectTracker.{ProjectServer, StorageAdapter}
+  alias SideProjectTracker.OTP.{ProjectServer, StorageAdapter}
 
   def start_link(_) do
     GenServer.start_link(__MODULE__, %{})

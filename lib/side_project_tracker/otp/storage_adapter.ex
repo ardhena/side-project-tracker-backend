@@ -1,4 +1,4 @@
-defmodule SideProjectTracker.StorageAdapter do
+defmodule SideProjectTracker.OTP.StorageAdapter do
   @moduledoc """
   `StorageAdapter` module takes care of persistence of what `Storage` agent keeps in memory.
   The project struct is serialized to json during save and parsed from json to struct during

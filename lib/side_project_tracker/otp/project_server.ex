@@ -1,4 +1,4 @@
-defmodule SideProjectTracker.ProjectServer do
+defmodule SideProjectTracker.OTP.ProjectServer do
   @moduledoc """
   `ProjectServer` module is responsible for performing operations on `ProjectStorage` data.
   It has two main functions: `get/1` - using call and `perform/3` - using cast. All call
@@ -6,7 +6,7 @@ defmodule SideProjectTracker.ProjectServer do
   storage.
   """
   use GenServer
-  alias SideProjectTracker.{Projects.Project, ProjectStorage}
+  alias SideProjectTracker.{Projects.Project, OTP.ProjectStorage}
 
   # API
 
