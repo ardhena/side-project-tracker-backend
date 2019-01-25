@@ -71,7 +71,11 @@ defmodule SideProjectTracker.API.V1 do
         patch ":key" do
           json(
             conn,
-            MainServer.perform(params[:project_key], :update_task, {params[:key], params[:task_name]})
+            MainServer.perform(
+              params[:project_key],
+              :update_task,
+              {params[:key], params[:task_name]}
+            )
           )
         end
 

@@ -5,6 +5,7 @@ defmodule SideProjectTracker.OTP.PeriodicServer do
   """
   use GenServer
   alias SideProjectTracker.OTP.{ProjectServer, StorageAdapter}
+  import SideProjectTracker.OTP.ServerNaming, only: [name: 2]
 
   def start_link(opts) do
     GenServer.start_link(__MODULE__, :ok, opts)
@@ -16,8 +17,13 @@ defmodule SideProjectTracker.OTP.PeriodicServer do
   end
 
   def handle_info(:work, state) do
-    ProjectServer.get()
-    |> StorageAdapter.save()
+    StorageAdapter.list_projects()
+    |> Enum.each(fn project ->
+      :server
+      |> name(project)
+      |> ProjectServer.get()
+      |> StorageAdapter.save()
+    end)
 
     schedule_work()
     {:noreply, state}
@@ -25,6 +31,6 @@ defmodule SideProjectTracker.OTP.PeriodicServer do
 
   defp schedule_work do
     # every 5 minutes
-    Process.send_after(self(), :work, 5 * 60 * 1000)
+    Process.send_after(self(), :work, 1 * 60 * 1000)
   end
 end
