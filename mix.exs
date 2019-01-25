@@ -5,7 +5,7 @@ defmodule SideProjectTracker.MixProject do
     [
       app: :side_project_tracker,
       version: "1.0.0",
-      elixir: "~> 1.6",
+      elixir: "~> 1.8",
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
@@ -30,7 +30,8 @@ defmodule SideProjectTracker.MixProject do
        git: "https://github.com/ardhena/distillery.git",
        branch: "fix-loading-pidfile-config-from-vm-args"},
       {:exsync, "~> 0.2", only: :dev},
-      {:mock, "~> 0.3.0", only: :test}
+      {:mock, "~> 0.3.0", only: :test},
+      {:meck, "~> 0.8.13", only: :test}
     ]
   end
 end

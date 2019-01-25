@@ -3,7 +3,13 @@ defmodule SideProjectTracker.OTP.MainServer do
   `MainServer` acts as bridge between individual project servers. It can call any project
   server and perform any available action in it.
   """
-  alias SideProjectTracker.{Projects.Project, OTP.ProjectServer, OTP.ProjectSupervisor, OTP.StorageAdapter}
+  alias SideProjectTracker.{
+    Projects.Project,
+    OTP.ProjectServer,
+    OTP.ProjectSupervisor,
+    OTP.StorageAdapter
+  }
+
   import SideProjectTracker.OTP.ServerNaming, only: [name: 2]
 
   @doc """
