@@ -17,19 +17,23 @@ defmodule SideProjectTracker.API.V1 do
     end
   end
 
-  resources "projects/default/tasks" do
+  params do
+    requires(:project_key, type: String)
+  end
+
+  resources "projects/:project_key/tasks" do
     ## OPTIONS /tasks ##
     options do
     end
 
     ## GET /tasks ##
     get do
-      json(conn, "default" |> MainServer.get() |> Project.to_old_format())
+      json(conn, params[:project_key] |> MainServer.get() |> Project.to_old_format())
     end
 
     ## DELETE /tasks ##
     delete do
-      json(conn, "default" |> MainServer.perform(:delete_tasks, {}))
+      json(conn, MainServer.perform(params[:project_key], :delete_tasks, {}))
     end
 
     ## POST /tasks ##
@@ -41,8 +45,7 @@ defmodule SideProjectTracker.API.V1 do
     post do
       json(
         conn,
-        "default"
-        |> MainServer.perform(:new_task, {params[:task_key], String.to_atom(params[:column_key])})
+        MainServer.perform(params[:project_key], :new_task, {params[:task_key], String.to_atom(params[:column_key])})
       )
     end
 
@@ -56,7 +59,7 @@ defmodule SideProjectTracker.API.V1 do
     end
 
     delete ":key" do
-      json(conn, "default" |> MainServer.perform(:delete_task, {params[:key]}))
+      json(conn, MainServer.perform(params[:project_key], :delete_task, {params[:key]}))
     end
 
     ## PATCH /tasks/:key ##
@@ -68,7 +71,7 @@ defmodule SideProjectTracker.API.V1 do
     patch ":key" do
       json(
         conn,
-        "default" |> MainServer.perform(:update_task, {params[:key], params[:task_name]})
+        MainServer.perform(params[:project_key], :update_task, {params[:key], params[:task_name]})
       )
     end
 
@@ -85,8 +88,7 @@ defmodule SideProjectTracker.API.V1 do
     post ":key/move" do
       json(
         conn,
-        "default"
-        |> MainServer.perform(:move_task, {params[:key], String.to_atom(params[:column_key])})
+        MainServer.perform(params[:project_key], :move_task, {params[:key], String.to_atom(params[:column_key])})
       )
     end
   end
