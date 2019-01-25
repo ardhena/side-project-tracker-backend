@@ -6,8 +6,8 @@ defmodule SideProjectTracker.OTP.PeriodicServer do
   use GenServer
   alias SideProjectTracker.OTP.{ProjectServer, StorageAdapter}
 
-  def start_link(_) do
-    GenServer.start_link(__MODULE__, %{})
+  def start_link(opts) do
+    GenServer.start_link(__MODULE__, :ok, opts)
   end
 
   def init(state) do

@@ -5,8 +5,8 @@ defmodule SideProjectTracker.OTP.ProjectStorage do
   use GenServer
   alias SideProjectTracker.{Projects.Project, OTP.StorageAdapter}
 
-  def start_link(opts) do
-    GenServer.start_link(__MODULE__, StorageAdapter.load(%Project{key: "default"}), opts)
+  def start_link(name: name, project: project) do
+    GenServer.start_link(__MODULE__, StorageAdapter.load(project), name: name)
   end
 
   # API
@@ -14,17 +14,17 @@ defmodule SideProjectTracker.OTP.ProjectStorage do
   @doc """
   Returns data stored in a storage
   """
-  @spec get() :: Project.t()
-  def get() do
-    GenServer.call(__MODULE__, :get)
+  @spec get(server :: atom()) :: Project.t()
+  def get(server) do
+    GenServer.call(server, :get)
   end
 
   @doc """
   Updates data stored in a storage
   """
-  @spec update(updated_project :: Project.t()) :: :ok
-  def update(updated_project) do
-    GenServer.cast(__MODULE__, {:update, updated_project})
+  @spec update(server :: atom(), updated_project :: Project.t()) :: :ok
+  def update(server, updated_project) do
+    GenServer.cast(server, {:update, updated_project})
   end
 
   # Client

@@ -31,7 +31,7 @@ defmodule SideProjectTracker.OTP.StorageAdapterTest do
   describe "list_projects/0" do
     test "returns names of project file from directory" do
       project = Project.new()
-      assert {:ok, file_path} = StorageAdapter.save(project)
+      assert {:ok, _file_path} = StorageAdapter.save(project)
 
       assert [
                %SideProjectTracker.Projects.Project{
@@ -47,7 +47,7 @@ defmodule SideProjectTracker.OTP.StorageAdapterTest do
   describe "load_projects/0" do
     test "returns loaded projects from directory" do
       project = Project.new()
-      assert {:ok, file_path} = StorageAdapter.save(project)
+      assert {:ok, _file_path} = StorageAdapter.save(project)
 
       assert [
                %SideProjectTracker.Projects.Project{

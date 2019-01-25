@@ -1,0 +1,28 @@
+defmodule SideProjectTracker.OTP.MainServer do
+  @moduledoc """
+  `MainServer` acts as bridge between individual project servers. It can call any project
+  server and perform any available action in it.
+  """
+  alias SideProjectTracker.{Projects.Project, OTP.ProjectServer}
+  import SideProjectTracker.OTP.ServerNaming, only: [name: 2]
+
+  @doc """
+  Gets project data from individual project storage
+  """
+  @spec get(key :: String.t()) :: Project.t()
+  def get(key) do
+    :server
+    |> name(key)
+    |> ProjectServer.get()
+  end
+
+  @doc """
+  Perfoms some operation on idividual project data and updates the storage
+  """
+  @spec perform(key :: String.t(), action :: atom(), arguments :: tuple()) :: :ok
+  def perform(key, action, arguments) do
+    :server
+    |> name(key)
+    |> ProjectServer.perform(action, arguments)
+  end
+end

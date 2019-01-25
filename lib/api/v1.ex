@@ -1,6 +1,6 @@
 defmodule SideProjectTracker.API.V1 do
   use Maru.Router
-  alias SideProjectTracker.{OTP.ProjectServer, Projects.Project}
+  alias SideProjectTracker.{OTP.MainServer, Projects.Project}
 
   get do
     json(conn, %{message: "API V1"})
@@ -24,12 +24,12 @@ defmodule SideProjectTracker.API.V1 do
 
     ## GET /tasks ##
     get do
-      json(conn, ProjectServer.get() |> Project.to_old_format())
+      json(conn, "default" |> MainServer.get() |> Project.to_old_format())
     end
 
     ## DELETE /tasks ##
     delete do
-      json(conn, ProjectServer.perform(:delete_tasks, {}))
+      json(conn, "default" |> MainServer.perform(:delete_tasks, {}))
     end
 
     ## POST /tasks ##
@@ -41,7 +41,8 @@ defmodule SideProjectTracker.API.V1 do
     post do
       json(
         conn,
-        ProjectServer.perform(:new_task, {params[:task_key], String.to_atom(params[:column_key])})
+        "default"
+        |> MainServer.perform(:new_task, {params[:task_key], String.to_atom(params[:column_key])})
       )
     end
 
@@ -55,7 +56,7 @@ defmodule SideProjectTracker.API.V1 do
     end
 
     delete ":key" do
-      json(conn, ProjectServer.perform(:delete_task, {params[:key]}))
+      json(conn, "default" |> MainServer.perform(:delete_task, {params[:key]}))
     end
 
     ## PATCH /tasks/:key ##
@@ -65,7 +66,10 @@ defmodule SideProjectTracker.API.V1 do
     end
 
     patch ":key" do
-      json(conn, ProjectServer.perform(:update_task, {params[:key], params[:task_name]}))
+      json(
+        conn,
+        "default" |> MainServer.perform(:update_task, {params[:key], params[:task_name]})
+      )
     end
 
     ## OPTIONS /tasks/:key/move ##
@@ -81,7 +85,8 @@ defmodule SideProjectTracker.API.V1 do
     post ":key/move" do
       json(
         conn,
-        ProjectServer.perform(:move_task, {params[:key], String.to_atom(params[:column_key])})
+        "default"
+        |> MainServer.perform(:move_task, {params[:key], String.to_atom(params[:column_key])})
       )
     end
   end
