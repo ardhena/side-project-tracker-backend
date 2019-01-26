@@ -23,6 +23,15 @@ defmodule SideProjectTracker.Projects.Project do
     }
   end
 
+  def new(%{"key" => key, "columns" => columns, "tasks" => tasks}) do
+    %__MODULE__{
+      key: key,
+      columns: columns |> Enum.map(&Column.new(&1)),
+      tasks: tasks |> Enum.map(&Task.new(&1)),
+      versions: []
+    }
+  end
+
   def put(%__MODULE__{} = project, :tasks, tasks), do: %__MODULE__{project | tasks: tasks}
 
   def put(%__MODULE__{} = project, :versions, versions),
