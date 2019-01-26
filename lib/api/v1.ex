@@ -102,6 +102,7 @@ defmodule SideProjectTracker.API.V1 do
         params do
           requires(:key, type: String)
           requires(:task_name, type: String)
+          requires(:task_version, type: String)
         end
 
         patch ":key" do
@@ -110,7 +111,7 @@ defmodule SideProjectTracker.API.V1 do
             MainServer.perform(
               params[:project_key],
               :update_task,
-              {params[:key], params[:task_name]}
+              {params[:key], params[:task_name], params[:task_version]}
             )
           )
         end

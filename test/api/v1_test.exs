@@ -56,19 +56,19 @@ defmodule SideProjectTracker.API.V1Test do
                  "key" => "todo",
                  "name" => "To do",
                  "tasks" => [
-                   %{"key" => "1", "name" => "some task"},
-                   %{"key" => "2", "name" => "another task"}
+                   %{"key" => "1", "name" => "some task", "version" => nil},
+                   %{"key" => "2", "name" => "another task", "version" => nil}
                  ]
                },
                %{
                  "key" => "doing",
                  "name" => "Doing",
-                 "tasks" => [%{"key" => "3", "name" => "working on it now"}]
+                 "tasks" => [%{"key" => "3", "name" => "working on it now", "version" => nil}]
                },
                %{
                  "key" => "done",
                  "name" => "Done",
-                 "tasks" => [%{"key" => "4", "name" => "already done task"}]
+                 "tasks" => [%{"key" => "4", "name" => "already done task", "version" => nil}]
                }
              ]
     end
@@ -93,7 +93,7 @@ defmodule SideProjectTracker.API.V1Test do
            }
 
     assert build_conn()
-           |> put_body_or_params(%{task_name: "new name"})
+           |> put_body_or_params(%{task_name: "new name", task_version: "v1.0.0"})
            |> patch("/api/v1/projects/default/tasks/1")
            |> json_response == "ok"
   end

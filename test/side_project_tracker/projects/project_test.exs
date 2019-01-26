@@ -70,11 +70,11 @@ defmodule SideProjectTracker.Projects.ProjectTest do
 
   describe "update_task/3" do
     test "updates task name in list of tasks", %{project: project} do
-      assert Project.update_task(project, "4", "new name").tasks == [
-               %Task{column_key: "todo", key: "1", name: "some task"},
-               %Task{column_key: "todo", key: "2", name: "another task"},
-               %Task{column_key: "doing", key: "3", name: "working on it now"},
-               %Task{column_key: "done", key: "4", name: "new name"}
+      assert Project.update_task(project, "4", "new name", "new version").tasks == [
+               %Task{column_key: "todo", key: "1", name: "some task", version: nil},
+               %Task{column_key: "todo", key: "2", name: "another task", version: nil},
+               %Task{column_key: "doing", key: "3", name: "working on it now", version: nil},
+               %Task{column_key: "done", key: "4", name: "new name", version: "new version"}
              ]
     end
   end
@@ -126,22 +126,22 @@ defmodule SideProjectTracker.Projects.ProjectTest do
                  key: "todo",
                  name: "To do",
                  tasks: [
-                   %{name: "some task", key: "1"},
-                   %{name: "another task", key: "2"}
+                   %{name: "some task", key: "1", version: nil},
+                   %{name: "another task", key: "2", version: nil}
                  ]
                },
                %{
                  key: "doing",
                  name: "Doing",
                  tasks: [
-                   %{name: "working on it now", key: "3"}
+                   %{name: "working on it now", key: "3", version: nil}
                  ]
                },
                %{
                  key: "done",
                  name: "Done",
                  tasks: [
-                   %{name: "already done task", key: "4"}
+                   %{name: "already done task", key: "4", version: nil}
                  ]
                }
              ]

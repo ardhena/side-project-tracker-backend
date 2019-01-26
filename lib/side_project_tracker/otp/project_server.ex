@@ -36,8 +36,8 @@ defmodule SideProjectTracker.OTP.ProjectServer do
     GenServer.cast(server, {:new_task, task_key, column_key})
   end
 
-  def perform(server, :update_task, {task_key, task_name}) do
-    GenServer.cast(server, {:update_task, task_key, task_name})
+  def perform(server, :update_task, {task_key, task_name, task_version}) do
+    GenServer.cast(server, {:update_task, task_key, task_name, task_version})
   end
 
   def perform(server, :move_task, {task_key, column_key}) do
@@ -77,11 +77,11 @@ defmodule SideProjectTracker.OTP.ProjectServer do
     {:noreply, storage_name}
   end
 
-  def handle_cast({:update_task, task_key, new_task_name}, storage_name) do
+  def handle_cast({:update_task, task_key, new_task_name, new_task_version}, storage_name) do
     updated_data =
       storage_name
       |> ProjectStorage.get()
-      |> Project.update_task(task_key, new_task_name)
+      |> Project.update_task(task_key, new_task_name, new_task_version)
 
     ProjectStorage.update(storage_name, updated_data)
 

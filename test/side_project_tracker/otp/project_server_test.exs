@@ -83,31 +83,31 @@ defmodule SideProjectTracker.OTP.ProjectServerTest do
       assert ProjectServer.perform(
                server,
                :update_task,
-               {"1", "new task name"}
+               {"1", "new task name", "new version"}
              ) == :ok
 
       server
       |> ProjectServer.get()
-      |> assert_task_in_column(%{key: "1", name: "new task name"}, "todo")
+      |> assert_task_in_column(%{key: "1", name: "new task name", version: "new version"}, "todo")
       |> assert_task_not_in_column(%{key: "1", name: "some task"}, "todo")
       |> assert_equal_agent_storage(storage)
 
       assert ProjectServer.perform(
                server,
                :update_task,
-               {"2", "another updated name"}
+               {"2", "another updated name", nil}
              ) == :ok
 
       server
       |> ProjectServer.get()
-      |> assert_task_in_column(%{key: "2", name: "another updated name"}, "todo")
+      |> assert_task_in_column(%{key: "2", name: "another updated name", version: nil}, "todo")
       |> assert_task_not_in_column(%{key: "2", name: "another task"}, "todo")
       |> assert_equal_agent_storage(storage)
 
       assert ProjectServer.perform(
                server,
                :update_task,
-               {"0", "this task does not exist"}
+               {"0", "this task does not exist", nil}
              ) == :ok
 
       server
