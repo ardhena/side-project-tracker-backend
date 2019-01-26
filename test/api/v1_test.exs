@@ -93,7 +93,12 @@ defmodule SideProjectTracker.API.V1Test do
            }
 
     assert build_conn()
-           |> put_body_or_params(%{task_name: "new name", task_version: "v1.0.0"})
+           |> put_body_or_params(%{task_name: "new name"})
+           |> patch("/api/v1/projects/default/tasks/1")
+           |> json_response == "ok"
+
+    assert build_conn()
+           |> put_body_or_params(%{task_name: "new name 2", task_version: "v1.0.0"})
            |> patch("/api/v1/projects/default/tasks/1")
            |> json_response == "ok"
   end

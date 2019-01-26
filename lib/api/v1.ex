@@ -102,7 +102,7 @@ defmodule SideProjectTracker.API.V1 do
         params do
           requires(:key, type: String)
           requires(:task_name, type: String)
-          requires(:task_version, type: String)
+          optional(:task_version, type: String)
         end
 
         patch ":key" do
