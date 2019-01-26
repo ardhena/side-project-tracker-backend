@@ -34,6 +34,18 @@ defmodule SideProjectTracker.API.V1Test do
     end
   end
 
+  test "POST /api/v1/projects/default/versions" do
+    assert post("/api/v1/projects/default/versions") |> json_response == %{
+             "code" => 400,
+             "message" => "Bad Request"
+           }
+
+    assert build_conn()
+           |> put_body_or_params(%{code: "v1.0.0"})
+           |> post("/api/v1/projects/default/versions")
+           |> json_response == "ok"
+  end
+
   test "GET /api/v1/projects/default/tasks" do
     with_mocks([
       {MainServer, [:passthrough],
@@ -62,7 +74,7 @@ defmodule SideProjectTracker.API.V1Test do
     end
   end
 
-  test "POST /api/v1/projects/default/tasks/:key" do
+  test "POST /api/v1/projects/default/tasks" do
     assert post("/api/v1/projects/default/tasks") |> json_response == %{
              "code" => 400,
              "message" => "Bad Request"

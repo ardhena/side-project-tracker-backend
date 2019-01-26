@@ -23,7 +23,8 @@ defmodule SideProjectTracker.OTP.ProjectServer do
     GenServer.call(server, :get)
   end
 
-  @type actions :: :new_task | :update_task | :move_task | :delete_task | :delete_tasks
+  @type actions ::
+          :new_task | :update_task | :move_task | :delete_task | :delete_tasks | :new_version
 
   @doc """
   Perfoms some operation on project data and updates the storage
@@ -49,6 +50,10 @@ defmodule SideProjectTracker.OTP.ProjectServer do
 
   def perform(server, :delete_tasks, _arguments) do
     GenServer.cast(server, {:delete_tasks})
+  end
+
+  def perform(server, :new_version, {version_code}) do
+    GenServer.cast(server, {:new_version, version_code})
   end
 
   # Server
@@ -110,6 +115,17 @@ defmodule SideProjectTracker.OTP.ProjectServer do
       storage_name
       |> ProjectStorage.get()
       |> Project.delete_all_tasks()
+
+    ProjectStorage.update(storage_name, updated_data)
+
+    {:noreply, storage_name}
+  end
+
+  def handle_cast({:new_version, version_code}, storage_name) do
+    updated_data =
+      storage_name
+      |> ProjectStorage.get()
+      |> Project.add_version(version_code)
 
     ProjectStorage.update(storage_name, updated_data)
 

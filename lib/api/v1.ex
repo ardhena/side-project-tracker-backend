@@ -35,6 +35,24 @@ defmodule SideProjectTracker.API.V1 do
         json(conn, params[:project_key] |> MainServer.get())
       end
 
+      namespace "versions" do
+        ## OPTIONS /versions ##
+        options do
+        end
+
+        ## POST /versions ##
+        params do
+          requires(:code, type: String)
+        end
+
+        post do
+          json(
+            conn,
+            MainServer.perform(params[:project_key], :new_version, {params[:code]})
+          )
+        end
+      end
+
       namespace "tasks" do
         ## OPTIONS /tasks ##
         options do

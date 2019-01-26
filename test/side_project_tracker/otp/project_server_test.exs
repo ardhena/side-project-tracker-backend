@@ -185,5 +185,36 @@ defmodule SideProjectTracker.OTP.ProjectServerTest do
 
       GenServer.stop(server)
     end
+
+    test "new_version - adds new version", %{server: server, storage: storage} do
+      assert ProjectServer.perform(server, :new_version, {"v1.3.0"}) == :ok
+
+      data = ProjectServer.get(server)
+
+      assert data == %Project{
+               key: "default",
+               columns: [
+                 %Column{key: "todo", name: "To do"},
+                 %Column{key: "doing", name: "Doing"},
+                 %Column{key: "done", name: "Done"}
+               ],
+               tasks: [
+                 %Task{column_key: "todo", key: "1", name: "some task"},
+                 %Task{column_key: "todo", key: "2", name: "another task"},
+                 %Task{column_key: "doing", key: "3", name: "working on it now"},
+                 %Task{column_key: "done", key: "4", name: "already done task"}
+               ],
+               versions: [
+                 %Version{code: "v1.0.0"},
+                 %Version{code: "v1.1.0"},
+                 %Version{code: "v1.2.0"},
+                 %Version{code: "v1.3.0"}
+               ]
+             }
+
+      assert_equal_agent_storage(data, storage)
+
+      GenServer.stop(server)
+    end
   end
 end

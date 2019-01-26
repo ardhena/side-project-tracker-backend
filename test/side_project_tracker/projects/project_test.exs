@@ -108,6 +108,17 @@ defmodule SideProjectTracker.Projects.ProjectTest do
     end
   end
 
+  describe "add_version/2" do
+    test "adds new version at the end", %{project: project} do
+      assert Project.add_version(project, "v2.0.0").versions == [
+               %Version{code: "v1.0.0"},
+               %Version{code: "v1.1.0"},
+               %Version{code: "v1.2.0"},
+               %Version{code: "v2.0.0"}
+             ]
+    end
+  end
+
   describe "to_old_format/1" do
     test "returns project formatted in an old way", %{project: project} do
       assert Project.to_old_format(project) == [

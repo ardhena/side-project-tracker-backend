@@ -25,6 +25,9 @@ defmodule SideProjectTracker.Projects.Project do
 
   def put(%__MODULE__{} = project, :tasks, tasks), do: %__MODULE__{project | tasks: tasks}
 
+  def put(%__MODULE__{} = project, :versions, versions),
+    do: %__MODULE__{project | versions: versions}
+
   def add_task_to_column(%__MODULE__{tasks: tasks} = project, task_key, column_key) do
     project
     |> put(:tasks, [Task.new(%{column_key: column_key, key: task_key, name: nil}) | tasks])
@@ -60,6 +63,11 @@ defmodule SideProjectTracker.Projects.Project do
   def delete_all_tasks(%__MODULE__{} = project) do
     project
     |> put(:tasks, [])
+  end
+
+  def add_version(%__MODULE__{versions: versions} = project, version_code) do
+    project
+    |> put(:versions, versions ++ [Version.new(%{code: version_code})])
   end
 
   def to_old_format(%__MODULE__{columns: columns, tasks: tasks}) do

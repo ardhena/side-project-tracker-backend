@@ -31,6 +31,6 @@ defmodule SideProjectTracker.OTP.PeriodicServer do
 
   defp schedule_work do
     # every 5 minutes
-    Process.send_after(self(), :work, 1 * 60 * 1000)
+    Process.send_after(self(), :work, 5 * 60 * 1000)
   end
 end
