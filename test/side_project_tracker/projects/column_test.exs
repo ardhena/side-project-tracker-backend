@@ -6,9 +6,9 @@ defmodule SideProjectTracker.Projects.ColumnTest do
   describe "all/0" do
     test "returns default columns" do
       assert Column.all() == [
-               %Column{key: :todo, name: "To do"},
-               %Column{key: :doing, name: "Doing"},
-               %Column{key: :done, name: "Done"}
+               %Column{key: "todo", name: "To do"},
+               %Column{key: "doing", name: "Doing"},
+               %Column{key: "done", name: "Done"}
              ]
     end
   end

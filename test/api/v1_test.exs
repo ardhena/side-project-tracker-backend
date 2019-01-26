@@ -2,24 +2,42 @@ defmodule SideProjectTracker.API.V1Test do
   use ExUnit.Case, async: false
   use Maru.Test
   import Mock
-  alias SideProjectTracker.{OTP.MainServer, OTP.StorageAdapter, Projects.Project}
+  import SideProjectTracker.Factory
+
+  alias SideProjectTracker.{
+    OTP.MainServer,
+    OTP.ProjectServer,
+    OTP.StorageAdapter,
+    Projects.Project
+  }
 
   test "GET /api/v1" do
     assert get("/api/v1") |> json_response == %{"message" => "API V1"}
   end
 
   test "GET /api/v1/projects" do
-    project = Project.new()
-    assert {:ok, _file_path} = StorageAdapter.save(project)
+    {:ok, _file_path} = StorageAdapter.save(build(:project))
 
-    assert [
+    assert get("/api/v1/projects") |> json_response == [
              %{"key" => "default"}
-           ] = get("/api/v1/projects") |> json_response
+           ]
+  end
+
+  test "GET /api/v1/projects/default" do
+    with_mocks([
+      {ProjectServer, [:passthrough], [get: fn _arg -> build(:project) end]}
+    ]) do
+      assert get("/api/v1/projects/default") |> json_response == %{
+               "key" => "default",
+               "versions" => [%{"code" => "v1.0.0"}, %{"code" => "v1.1.0"}, %{"code" => "v1.2.0"}]
+             }
+    end
   end
 
   test "GET /api/v1/projects/default/tasks" do
     with_mocks([
-      {MainServer, [:passthrough], [get: fn _arg -> Project.new() end]}
+      {MainServer, [:passthrough],
+       [get_tasks: fn _arg -> build(:project) |> Project.to_old_format() end]}
     ]) do
       assert get("/api/v1/projects/default/tasks") |> json_response == [
                %{

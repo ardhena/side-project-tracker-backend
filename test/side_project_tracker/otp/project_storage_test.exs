@@ -1,10 +1,12 @@
 defmodule SideProjectTracker.OTP.ProjectStorageTest do
   use ExUnit.Case, async: false
-  alias SideProjectTracker.{OTP.ProjectStorage, Projects.Project}
+  import SideProjectTracker.Factory
+
+  alias SideProjectTracker.OTP.ProjectStorage
 
   describe "get and update" do
     test "updates data in agent storage" do
-      {:ok, server} = GenServer.start_link(ProjectStorage, Project.new(), [])
+      {:ok, server} = GenServer.start_link(ProjectStorage, build(:project), [])
 
       storage = ProjectStorage.get(server)
 

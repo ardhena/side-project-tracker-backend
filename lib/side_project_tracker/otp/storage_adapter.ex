@@ -42,7 +42,7 @@ defmodule SideProjectTracker.OTP.StorageAdapter do
         json |> Jason.decode!() |> Project.new()
 
       {:error, :enoent} ->
-        Project.new()
+        project
     end
   end
 
@@ -69,7 +69,7 @@ defmodule SideProjectTracker.OTP.StorageAdapter do
   """
   @spec load_projects() :: list(Project.t())
   def load_projects do
-    list_projects
+    list_projects()
     |> Enum.map(&load(&1))
   end
 

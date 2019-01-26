@@ -1,7 +1,8 @@
 defmodule SideProjectTracker.OTP.ProjectServerTest do
   use ExUnit.Case, async: false
+  import SideProjectTracker.Factory
 
-  alias SideProjectTracker.Projects.{Column, Project, Task}
+  alias SideProjectTracker.Projects.{Column, Project, Task, Version}
   alias SideProjectTracker.OTP.{ProjectServer, ProjectStorage}
 
   def assert_task_in_column(project, %{key: key, name: name}, column_key) do
@@ -27,7 +28,7 @@ defmodule SideProjectTracker.OTP.ProjectServerTest do
   end
 
   setup do
-    {:ok, storage} = GenServer.start_link(ProjectStorage, Project.new(), [])
+    {:ok, storage} = GenServer.start_link(ProjectStorage, build(:project), [])
 
     {:ok, server} = GenServer.start_link(ProjectServer, storage, [])
 
@@ -39,15 +40,20 @@ defmodule SideProjectTracker.OTP.ProjectServerTest do
       assert ProjectServer.get(server) == %Project{
                key: "default",
                columns: [
-                 %Column{key: :todo, name: "To do"},
-                 %Column{key: :doing, name: "Doing"},
-                 %Column{key: :done, name: "Done"}
+                 %Column{key: "todo", name: "To do"},
+                 %Column{key: "doing", name: "Doing"},
+                 %Column{key: "done", name: "Done"}
                ],
                tasks: [
-                 %Task{column_key: :todo, key: "1", name: "some task"},
-                 %Task{column_key: :todo, key: "2", name: "another task"},
-                 %Task{column_key: :doing, key: "3", name: "working on it now"},
-                 %Task{column_key: :done, key: "4", name: "already done task"}
+                 %Task{column_key: "todo", key: "1", name: "some task"},
+                 %Task{column_key: "todo", key: "2", name: "another task"},
+                 %Task{column_key: "doing", key: "3", name: "working on it now"},
+                 %Task{column_key: "done", key: "4", name: "already done task"}
+               ],
+               versions: [
+                 %Version{code: "v1.0.0"},
+                 %Version{code: "v1.1.0"},
+                 %Version{code: "v1.2.0"}
                ]
              }
 
@@ -60,11 +66,11 @@ defmodule SideProjectTracker.OTP.ProjectServerTest do
       server: server,
       storage: storage
     } do
-      assert ProjectServer.perform(server, :new_task, {"6", :todo}) == :ok
+      assert ProjectServer.perform(server, :new_task, {"6", "todo"}) == :ok
 
       server
       |> ProjectServer.get()
-      |> assert_task_in_column(%{key: "6", name: nil}, :todo)
+      |> assert_task_in_column(%{key: "6", name: nil}, "todo")
       |> assert_equal_agent_storage(storage)
 
       GenServer.stop(server)
@@ -82,8 +88,8 @@ defmodule SideProjectTracker.OTP.ProjectServerTest do
 
       server
       |> ProjectServer.get()
-      |> assert_task_in_column(%{key: "1", name: "new task name"}, :todo)
-      |> assert_task_not_in_column(%{key: "1", name: "some task"}, :todo)
+      |> assert_task_in_column(%{key: "1", name: "new task name"}, "todo")
+      |> assert_task_not_in_column(%{key: "1", name: "some task"}, "todo")
       |> assert_equal_agent_storage(storage)
 
       assert ProjectServer.perform(
@@ -94,8 +100,8 @@ defmodule SideProjectTracker.OTP.ProjectServerTest do
 
       server
       |> ProjectServer.get()
-      |> assert_task_in_column(%{key: "2", name: "another updated name"}, :todo)
-      |> assert_task_not_in_column(%{key: "2", name: "another task"}, :todo)
+      |> assert_task_in_column(%{key: "2", name: "another updated name"}, "todo")
+      |> assert_task_not_in_column(%{key: "2", name: "another task"}, "todo")
       |> assert_equal_agent_storage(storage)
 
       assert ProjectServer.perform(
@@ -106,9 +112,9 @@ defmodule SideProjectTracker.OTP.ProjectServerTest do
 
       server
       |> ProjectServer.get()
-      |> assert_task_not_in_column(%{key: "0", name: "this task does not exist"}, :todo)
-      |> assert_task_not_in_column(%{key: "0", name: "this task does not exist"}, :doing)
-      |> assert_task_not_in_column(%{key: "0", name: "this task does not exist"}, :done)
+      |> assert_task_not_in_column(%{key: "0", name: "this task does not exist"}, "todo")
+      |> assert_task_not_in_column(%{key: "0", name: "this task does not exist"}, "doing")
+      |> assert_task_not_in_column(%{key: "0", name: "this task does not exist"}, "done")
       |> assert_equal_agent_storage(storage)
 
       GenServer.stop(server)
@@ -118,19 +124,19 @@ defmodule SideProjectTracker.OTP.ProjectServerTest do
       server: server,
       storage: storage
     } do
-      assert ProjectServer.perform(server, :move_task, {"1", :done}) == :ok
+      assert ProjectServer.perform(server, :move_task, {"1", "done"}) == :ok
 
       server
       |> ProjectServer.get()
-      |> assert_task_not_in_column(%{key: "1", name: "some task"}, :todo)
-      |> assert_task_in_column(%{key: "1", name: "some task"}, :done)
+      |> assert_task_not_in_column(%{key: "1", name: "some task"}, "todo")
+      |> assert_task_in_column(%{key: "1", name: "some task"}, "done")
       |> assert_equal_agent_storage(storage)
 
-      assert ProjectServer.perform(server, :move_task, {"3", :doing}) == :ok
+      assert ProjectServer.perform(server, :move_task, {"3", "doing"}) == :ok
 
       server
       |> ProjectServer.get()
-      |> assert_task_in_column(%{key: "3", name: "working on it now"}, :doing)
+      |> assert_task_in_column(%{key: "3", name: "working on it now"}, "doing")
       |> assert_equal_agent_storage(storage)
 
       GenServer.stop(server)
@@ -144,9 +150,9 @@ defmodule SideProjectTracker.OTP.ProjectServerTest do
 
       server
       |> ProjectServer.get()
-      |> assert_task_not_in_column(%{key: "1", name: "some task"}, :todo)
-      |> assert_task_not_in_column(%{key: "1", name: "some task"}, :doing)
-      |> assert_task_not_in_column(%{key: "1", name: "some task"}, :done)
+      |> assert_task_not_in_column(%{key: "1", name: "some task"}, "todo")
+      |> assert_task_not_in_column(%{key: "1", name: "some task"}, "doing")
+      |> assert_task_not_in_column(%{key: "1", name: "some task"}, "done")
       |> assert_equal_agent_storage(storage)
 
       GenServer.stop(server)
@@ -163,11 +169,16 @@ defmodule SideProjectTracker.OTP.ProjectServerTest do
       assert data == %Project{
                key: "default",
                columns: [
-                 %Column{key: :todo, name: "To do"},
-                 %Column{key: :doing, name: "Doing"},
-                 %Column{key: :done, name: "Done"}
+                 %Column{key: "todo", name: "To do"},
+                 %Column{key: "doing", name: "Doing"},
+                 %Column{key: "done", name: "Done"}
                ],
-               tasks: []
+               tasks: [],
+               versions: [
+                 %Version{code: "v1.0.0"},
+                 %Version{code: "v1.1.0"},
+                 %Version{code: "v1.2.0"}
+               ]
              }
 
       assert_equal_agent_storage(data, storage)

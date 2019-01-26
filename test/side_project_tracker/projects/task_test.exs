@@ -1,34 +1,34 @@
 defmodule SideProjectTracker.Projects.TaskTest do
   use ExUnit.Case, async: false
+  import SideProjectTracker.Factory
 
   alias SideProjectTracker.Projects.Task
 
-  describe "new/3" do
-    test "returns task" do
-      assert Task.new(:todo, 1, "test 1") == %Task{column_key: :todo, key: 1, name: "test 1"}
-      assert Task.new(:doing, 2, "test 2") == %Task{column_key: :doing, key: 2, name: "test 2"}
-      assert Task.new(:done, 3, "test 3") == %Task{column_key: :done, key: 3, name: "test 3"}
+  setup do
+    %{task: build(:task_todo)}
+  end
+
+  describe "new/1" do
+    test "returns task", %{task: task} do
+      assert Task.new(%{"column_key" => task.column_key, "key" => task.key, "name" => task.name}) ==
+               %Task{column_key: "todo", key: "1", name: "some task"}
     end
   end
 
   describe "update/2" do
-    test "updates name" do
-      task = %Task{column_key: :todo, key: 1, name: "test 1"}
-
+    test "updates name", %{task: task} do
       assert Task.update(task, name: "updated name") == %Task{
-               column_key: :todo,
-               key: 1,
+               column_key: "todo",
+               key: "1",
                name: "updated name"
              }
     end
 
-    test "updates columnn key" do
-      task = %Task{column_key: :todo, key: 1, name: "test 1"}
-
-      assert Task.update(task, column_key: :done) == %Task{
-               column_key: :done,
-               key: 1,
-               name: "test 1"
+    test "updates column key", %{task: task} do
+      assert Task.update(task, column_key: "done") == %Task{
+               column_key: "done",
+               key: "1",
+               name: "some task"
              }
     end
   end

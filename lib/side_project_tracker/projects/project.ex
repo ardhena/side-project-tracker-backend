@@ -1,50 +1,33 @@
 defmodule SideProjectTracker.Projects.Project do
-  alias SideProjectTracker.Projects.{Column, Task}
+  alias SideProjectTracker.Projects.{Column, Task, Version}
 
   @derive Jason.Encoder
 
-  defstruct [:key, :columns, :tasks]
+  defstruct [:key, :columns, :tasks, :versions]
 
-  def new() do
+  def new(%{key: key}) do
     %__MODULE__{
-      key: "default",
+      key: key,
       columns: Column.all(),
-      tasks: [
-        Task.new(:todo, "1", "some task"),
-        Task.new(:todo, "2", "another task"),
-        Task.new(:doing, "3", "working on it now"),
-        Task.new(:done, "4", "already done task")
-      ]
+      tasks: [],
+      versions: []
     }
   end
 
-  def new(%{key: key}), do: %__MODULE__{key: key, columns: Column.all()}
-
-  def new(%{"key" => key, "columns" => columns, "tasks" => nil}) do
+  def new(%{"key" => key, "columns" => columns, "tasks" => tasks, "versions" => versions}) do
     %__MODULE__{
       key: key,
       columns: columns |> Enum.map(&Column.new(&1)),
-      tasks: []
+      tasks: tasks |> Enum.map(&Task.new(&1)),
+      versions: versions |> Enum.map(&Version.new(&1))
     }
-  end
-
-  def new(%{"key" => key, "columns" => columns, "tasks" => tasks}) do
-    %__MODULE__{
-      key: key,
-      columns: columns |> Enum.map(&Column.new(&1)),
-      tasks: tasks |> Enum.map(&Task.new(&1))
-    }
-  end
-
-  def new(%{"columns" => columns, "tasks" => tasks}) do
-    new(%{"key" => "default", "columns" => columns, "tasks" => tasks})
   end
 
   def put(%__MODULE__{} = project, :tasks, tasks), do: %__MODULE__{project | tasks: tasks}
 
   def add_task_to_column(%__MODULE__{tasks: tasks} = project, task_key, column_key) do
     project
-    |> put(:tasks, [Task.new(column_key, task_key, nil) | tasks])
+    |> put(:tasks, [Task.new(%{column_key: column_key, key: task_key, name: nil}) | tasks])
   end
 
   def update_task(%__MODULE__{tasks: tasks} = project, task_key, task_name) do

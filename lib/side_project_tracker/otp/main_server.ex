@@ -20,6 +20,19 @@ defmodule SideProjectTracker.OTP.MainServer do
     :server
     |> name(key)
     |> ProjectServer.get()
+    |> Map.from_struct()
+    |> Map.take([:key, :versions])
+  end
+
+  @doc """
+  Gets tasks from individual project storage
+  """
+  @spec get(key :: String.t()) :: Project.t()
+  def get_tasks(key) do
+    :server
+    |> name(key)
+    |> ProjectServer.get()
+    |> Project.to_old_format()
   end
 
   @doc """
@@ -38,6 +51,11 @@ defmodule SideProjectTracker.OTP.MainServer do
   @spec get_projects() :: list(Project.t())
   def get_projects do
     StorageAdapter.list_projects()
+    |> Enum.map(fn project ->
+      project
+      |> Map.from_struct()
+      |> Map.take([:key])
+    end)
   end
 
   @doc """

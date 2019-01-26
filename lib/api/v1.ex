@@ -1,6 +1,6 @@
 defmodule SideProjectTracker.API.V1 do
   use Maru.Router
-  alias SideProjectTracker.{OTP.MainServer, Projects.Project}
+  alias SideProjectTracker.OTP.MainServer
 
   get do
     json(conn, %{message: "API V1"})
@@ -26,6 +26,15 @@ defmodule SideProjectTracker.API.V1 do
     end
 
     route_param :project_key do
+      ## OPTIONS /:project_key ##
+      options do
+      end
+
+      ## GET /:project_key
+      get do
+        json(conn, params[:project_key] |> MainServer.get())
+      end
+
       namespace "tasks" do
         ## OPTIONS /tasks ##
         options do
@@ -33,7 +42,7 @@ defmodule SideProjectTracker.API.V1 do
 
         ## GET /tasks ##
         get do
-          json(conn, params[:project_key] |> MainServer.get() |> Project.to_old_format())
+          json(conn, params[:project_key] |> MainServer.get_tasks())
         end
 
         ## DELETE /tasks ##
@@ -53,7 +62,7 @@ defmodule SideProjectTracker.API.V1 do
             MainServer.perform(
               params[:project_key],
               :new_task,
-              {params[:task_key], String.to_atom(params[:column_key])}
+              {params[:task_key], params[:column_key]}
             )
           )
         end
@@ -104,7 +113,7 @@ defmodule SideProjectTracker.API.V1 do
             MainServer.perform(
               params[:project_key],
               :move_task,
-              {params[:key], String.to_atom(params[:column_key])}
+              {params[:key], params[:column_key]}
             )
           )
         end
