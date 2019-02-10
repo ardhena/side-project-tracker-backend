@@ -3,20 +3,20 @@ defmodule SideProjectTracker.Projects.Task do
 
   defstruct [:column_key, :key, :name, :version]
 
-  def new(%{"column_key" => column_key, "key" => key, "name" => name}) do
-    %__MODULE__{
-      column_key: column_key,
-      key: key,
-      name: name
-    }
-  end
-
   def new(%{"column_key" => column_key, "key" => key, "name" => name, "version" => version}) do
     %__MODULE__{
       column_key: column_key,
       key: key,
       name: name,
       version: version
+    }
+  end
+
+  def new(%{"column_key" => column_key, "key" => key, "name" => name}) do
+    %__MODULE__{
+      column_key: column_key,
+      key: key,
+      name: name
     }
   end
 
