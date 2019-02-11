@@ -1,6 +1,10 @@
 use Mix.Config
 
-config :maru, SideProjectTracker.API, http: [port: 8800]
+config :phoenix, :json_library, Jason
+
+config :logger, :console,
+  format: "$time $metadata[$level] $message\n",
+  metadata: [:request_id]
 
 config :side_project_tracker, :storage_path, "."
 
