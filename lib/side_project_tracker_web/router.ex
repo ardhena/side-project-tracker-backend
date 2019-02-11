@@ -17,9 +17,9 @@ defmodule SideProjectTrackerWeb.Router do
       delete("/tasks", TaskController, :delete_all)
       post("/tasks/:id/move", TaskController, :move)
 
-      options("/move", TaskController, :options)
       options("/tasks", TaskController, :options)
       options("/tasks/:id", TaskController, :options)
+      options("/tasks/:id/move", TaskController, :options)
     end
 
     options("/projects", ProjectController, :options)
