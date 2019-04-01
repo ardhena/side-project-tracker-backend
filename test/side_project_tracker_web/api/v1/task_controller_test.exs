@@ -35,8 +35,18 @@ defmodule SideProjectTrackerWeb.Api.V1.TaskControllerTest do
   end
 
   describe "POST create" do
-    test "returns 400", %{conn: conn} do
+    test "returns 400 without any body", %{conn: conn} do
       conn = post(conn, api_v1_project_task_path(conn, :create, "default", %{}))
+
+      assert %{"code" => "400", "message" => "Bad Request"} == json_response(conn, 400)
+    end
+
+    test "returns 400 without position", %{conn: conn} do
+      conn =
+        post(
+          conn,
+          api_v1_project_task_path(conn, :create, "default", %{column_key: "doing", task_key: "6"})
+        )
 
       assert %{"code" => "400", "message" => "Bad Request"} == json_response(conn, 400)
     end
@@ -45,7 +55,11 @@ defmodule SideProjectTrackerWeb.Api.V1.TaskControllerTest do
       conn =
         post(
           conn,
-          api_v1_project_task_path(conn, :create, "default", %{column_key: "doing", task_key: "6"})
+          api_v1_project_task_path(conn, :create, "default", %{
+            column_key: "doing",
+            task_key: "6",
+            position: "top"
+          })
         )
 
       assert %{"status" => "ok"} == json_response(conn, 204)

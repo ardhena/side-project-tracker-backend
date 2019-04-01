@@ -37,9 +37,14 @@ defmodule SideProjectTracker.Projects.Project do
   def put(%__MODULE__{} = project, :versions, versions),
     do: %__MODULE__{project | versions: versions}
 
-  def add_task_to_column(%__MODULE__{tasks: tasks} = project, task_key, column_key) do
+  def add_task_to_column(%__MODULE__{tasks: tasks} = project, task_key, column_key, "top") do
     project
     |> put(:tasks, [Task.new(%{column_key: column_key, key: task_key, name: nil}) | tasks])
+  end
+
+  def add_task_to_column(%__MODULE__{tasks: tasks} = project, task_key, column_key, "bottom") do
+    project
+    |> put(:tasks, tasks ++ [Task.new(%{column_key: column_key, key: task_key, name: nil})])
   end
 
   def update_task(%__MODULE__{tasks: tasks} = project, task_key, task_name, task_version) do

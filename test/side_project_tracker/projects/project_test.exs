@@ -57,8 +57,18 @@ defmodule SideProjectTracker.Projects.ProjectTest do
   end
 
   describe "add_task_to_column/3" do
-    test "adds new task to list of tasks", %{project: project} do
-      assert Project.add_task_to_column(project, "5", "todo").tasks == [
+    test "adds new task to list of tasks - bottom", %{project: project} do
+      assert Project.add_task_to_column(project, "5", "todo", "bottom").tasks == [
+               %Task{column_key: "todo", key: "1", name: "some task"},
+               %Task{column_key: "todo", key: "2", name: "another task"},
+               %Task{column_key: "doing", key: "3", name: "working on it now"},
+               %Task{column_key: "done", key: "4", name: "already done task"},
+               %Task{column_key: "todo", key: "5", name: nil}
+             ]
+    end
+
+    test "adds new task to list of tasks - top", %{project: project} do
+      assert Project.add_task_to_column(project, "5", "todo", "top").tasks == [
                %Task{column_key: "todo", key: "5", name: nil},
                %Task{column_key: "todo", key: "1", name: "some task"},
                %Task{column_key: "todo", key: "2", name: "another task"},

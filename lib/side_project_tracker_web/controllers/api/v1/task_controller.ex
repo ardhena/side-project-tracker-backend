@@ -10,9 +10,10 @@ defmodule SideProjectTrackerWeb.Api.V1.TaskController do
   def create(conn, %{
         "project_id" => project_key,
         "column_key" => column_key,
-        "task_key" => task_key
+        "task_key" => task_key,
+        "position" => position
       }) do
-    :ok = MainServer.perform(project_key, :new_task, {task_key, column_key})
+    :ok = MainServer.perform(project_key, :new_task, {task_key, column_key, position})
 
     render_ok(conn)
   end

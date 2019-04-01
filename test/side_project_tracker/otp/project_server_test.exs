@@ -66,7 +66,7 @@ defmodule SideProjectTracker.OTP.ProjectServerTest do
       server: server,
       storage: storage
     } do
-      assert ProjectServer.perform(server, :new_task, {"6", "todo"}) == :ok
+      assert ProjectServer.perform(server, :new_task, {"6", "todo", "top"}) == :ok
 
       server
       |> ProjectServer.get()
