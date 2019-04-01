@@ -32,7 +32,7 @@ defmodule SideProjectTracker.OTP.StorageAdapter do
   Right now every project is loaded from a `defult.json` file. The base path for file is set in
   configuration.
   """
-  @spec load(project :: Project.t()) :: {:ok, Project.t()} | {:error, any()}
+  @spec load(project :: Project.t()) :: Project.t()
   def load(%Project{} = project) do
     project
     |> file_path()

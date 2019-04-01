@@ -27,7 +27,7 @@ defmodule SideProjectTracker.OTP.MainServer do
   @doc """
   Gets tasks from individual project storage
   """
-  @spec get(key :: String.t()) :: Project.t()
+  @spec get_tasks(key :: String.t()) :: list()
   def get_tasks(key) do
     :server
     |> name(key)

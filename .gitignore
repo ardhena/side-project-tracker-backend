@@ -23,3 +23,6 @@ erl_crash.dump
 side_project_tracker-*.tar
 
 /.elixir_ls/
+
+# Ignore storage path
+/*.json
