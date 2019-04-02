@@ -9,7 +9,7 @@ defmodule SideProjectTrackerWeb.Api.V1.ProjectController do
 
   def show(conn, %{"id" => project_key}) do
     conn
-    |> assign(:project, MainServer.get(project_key))
+    |> assign(:project, MainServer.get_project(project_key))
     |> render(:project)
   end
 

@@ -6,7 +6,7 @@ defmodule SideProjectTrackerWeb.Api.V1.TaskControllerTest do
     test "returns projects", %{conn: conn} do
       with_mocks([
         {MainServer, [:passthrough],
-         [get_tasks: fn _arg -> build(:project) |> Project.to_old_format() end]}
+         [get_project_tasks: fn _arg -> build(:project) |> Project.to_old_format() end]}
       ]) do
         conn = get(conn, api_v1_project_task_path(conn, :index, "default"))
 

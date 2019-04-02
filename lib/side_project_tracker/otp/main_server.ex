@@ -15,8 +15,8 @@ defmodule SideProjectTracker.OTP.MainServer do
   @doc """
   Gets project data from individual project storage
   """
-  @spec get(key :: String.t()) :: Project.t()
-  def get(key) do
+  @spec get_project(key :: String.t()) :: Project.t()
+  def get_project(key) do
     :server
     |> name(key)
     |> ProjectServer.get()
@@ -27,8 +27,8 @@ defmodule SideProjectTracker.OTP.MainServer do
   @doc """
   Gets tasks from individual project storage
   """
-  @spec get_tasks(key :: String.t()) :: list()
-  def get_tasks(key) do
+  @spec get_project_tasks(key :: String.t()) :: list()
+  def get_project_tasks(key) do
     :server
     |> name(key)
     |> ProjectServer.get()
@@ -38,8 +38,8 @@ defmodule SideProjectTracker.OTP.MainServer do
   @doc """
   Perfoms some operation on idividual project data and updates the storage
   """
-  @spec perform(key :: String.t(), action :: atom(), arguments :: tuple()) :: :ok
-  def perform(key, action, arguments) do
+  @spec perform_in_project(key :: String.t(), action :: atom(), arguments :: tuple()) :: :ok
+  def perform_in_project(key, action, arguments) do
     :server
     |> name(key)
     |> ProjectServer.perform(action, arguments)
