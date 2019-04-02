@@ -158,34 +158,6 @@ defmodule SideProjectTracker.OTP.ProjectServerTest do
       GenServer.stop(server)
     end
 
-    test "delete_tasks - deletes all tasks from genserver storage and storage agent", %{
-      server: server,
-      storage: storage
-    } do
-      assert ProjectServer.perform(server, :delete_tasks, {}) == :ok
-
-      data = ProjectServer.get(server)
-
-      assert data == %Project{
-               key: "default",
-               columns: [
-                 %Column{key: "todo", name: "To do"},
-                 %Column{key: "doing", name: "Doing"},
-                 %Column{key: "done", name: "Done"}
-               ],
-               tasks: [],
-               versions: [
-                 %Version{code: "v1.0.0"},
-                 %Version{code: "v1.1.0"},
-                 %Version{code: "v1.2.0"}
-               ]
-             }
-
-      assert_equal_agent_storage(data, storage)
-
-      GenServer.stop(server)
-    end
-
     test "new_version - adds new version", %{server: server, storage: storage} do
       assert ProjectServer.perform(server, :new_version, {"v1.3.0"}) == :ok
 

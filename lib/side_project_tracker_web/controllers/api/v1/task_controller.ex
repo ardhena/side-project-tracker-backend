@@ -52,10 +52,4 @@ defmodule SideProjectTrackerWeb.Api.V1.TaskController do
 
     render_ok(conn)
   end
-
-  def delete_all(conn, %{"project_id" => project_key}) do
-    :ok = MainServer.perform(project_key, :delete_tasks, {})
-
-    render_ok(conn)
-  end
 end

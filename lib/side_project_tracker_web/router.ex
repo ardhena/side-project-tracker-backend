@@ -14,7 +14,6 @@ defmodule SideProjectTrackerWeb.Router do
       options("/versions", VersionController, :options)
 
       resources("/tasks", TaskController, only: [:index, :create, :update, :delete])
-      delete("/tasks", TaskController, :delete_all)
       post("/tasks/:id/move", TaskController, :move)
 
       options("/tasks", TaskController, :options)

@@ -112,12 +112,6 @@ defmodule SideProjectTracker.Projects.ProjectTest do
     end
   end
 
-  describe "delete_all_tasks/1" do
-    test "removes all tasks", %{project: project} do
-      assert Project.delete_all_tasks(project).tasks == []
-    end
-  end
-
   describe "add_version/2" do
     test "adds new version at the end", %{project: project} do
       assert Project.add_version(project, "v2.0.0").versions == [

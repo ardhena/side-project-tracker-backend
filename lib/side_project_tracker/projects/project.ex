@@ -76,11 +76,6 @@ defmodule SideProjectTracker.Projects.Project do
     |> put(:tasks, [moved_task | tasks_without_moved_task])
   end
 
-  def delete_all_tasks(%__MODULE__{} = project) do
-    project
-    |> put(:tasks, [])
-  end
-
   def add_version(%__MODULE__{versions: versions} = project, version_code) do
     project
     |> put(:versions, versions ++ [Version.new(%{code: version_code})])

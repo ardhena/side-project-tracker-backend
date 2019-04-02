@@ -117,12 +117,4 @@ defmodule SideProjectTrackerWeb.Api.V1.TaskControllerTest do
       assert %{"status" => "ok"} == json_response(conn, 204)
     end
   end
-
-  describe "DELETE delete_all" do
-    test "returns ok", %{conn: conn} do
-      conn = delete(conn, api_v1_project_task_path(conn, :delete_all, "default"))
-
-      assert %{"status" => "ok"} == json_response(conn, 204)
-    end
-  end
 end
