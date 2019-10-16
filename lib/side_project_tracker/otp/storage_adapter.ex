@@ -16,6 +16,28 @@ defmodule SideProjectTracker.OTP.StorageAdapter do
     json = project |> Jason.encode!()
 
     project
+    |> content_identical(json)
+    |> case do
+      true -> {:ok, file_path(project)}
+      false -> do_save(project, json)
+    end
+  end
+
+  defp content_identical(project, json) do
+    project
+    |> file_path()
+    |> File.read()
+    |> case do
+      {:ok, current_file_content} ->
+        current_file_content == json
+
+      _ ->
+        false
+    end
+  end
+
+  defp do_save(project, json) do
+    project
     |> file_path()
     |> File.write(json)
     |> case do
