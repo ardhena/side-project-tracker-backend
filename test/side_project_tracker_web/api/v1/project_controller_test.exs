@@ -52,4 +52,11 @@ defmodule SideProjectTrackerWeb.Api.V1.ProjectControllerTest do
       end
     end
   end
+
+  describe "PUT sync" do
+    test "syncs server memory into files", %{conn: conn} do
+      conn = put(conn, api_v1_project_path(conn, :sync))
+      assert response(conn, 204)
+    end
+  end
 end

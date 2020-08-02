@@ -9,6 +9,9 @@ defmodule SideProjectTrackerWeb.Router do
   scope "/api/v1", SideProjectTrackerWeb.Api.V1, as: :api_v1 do
     pipe_through :api
 
+    put("/projects/sync", ProjectController, :sync)
+    options("/projects/sync", ProjectController, :options)
+
     resources("/projects", ProjectController, only: [:index, :create, :show]) do
       resources("/versions", VersionController, only: [:create])
       options("/versions", VersionController, :options)

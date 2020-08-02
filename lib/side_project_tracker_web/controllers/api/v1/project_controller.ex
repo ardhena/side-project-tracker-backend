@@ -1,10 +1,17 @@
 defmodule SideProjectTrackerWeb.Api.V1.ProjectController do
   use SideProjectTrackerWeb, :controller
+  alias SideProjectTracker.OTP.StorageAdapter
 
   def index(conn, _params) do
     conn
     |> assign(:projects, MainServer.get_projects())
     |> render(:projects)
+  end
+
+  def sync(conn, _params) do
+    with :ok <- StorageAdapter.save_server_memory() do
+      render_ok(conn)
+    end
   end
 
   def show(conn, %{"id" => project_key}) do
@@ -14,9 +21,9 @@ defmodule SideProjectTrackerWeb.Api.V1.ProjectController do
   end
 
   def create(conn, %{"key" => project_key}) do
-    :ok = MainServer.new_project(project_key)
-
-    render_ok(conn)
+    with :ok <- MainServer.new_project(project_key) do
+      render_ok(conn)
+    end
   end
 
   def create(conn, _params), do: render_400(conn)

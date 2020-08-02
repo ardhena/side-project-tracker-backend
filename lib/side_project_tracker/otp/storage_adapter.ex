@@ -5,6 +5,7 @@ defmodule SideProjectTracker.OTP.StorageAdapter do
   during load.
   """
   alias SideProjectTracker.Projects.Project
+  alias SideProjectTracker.OTP.{ProjectServer, ServerNaming, StorageAdapter}
 
   @doc """
   Saves project in a file, serialized to json.
@@ -109,4 +110,17 @@ defmodule SideProjectTracker.OTP.StorageAdapter do
 
   defp base_path, do: Application.get_env(:side_project_tracker, :storage_path)
   defp file_path(%Project{key: key}), do: base_path() <> "/#{key}.json"
+
+  @doc """
+  Saves content of project server storage into files using storage adapter
+  """
+  def save_server_memory do
+    StorageAdapter.list_projects()
+    |> Enum.each(fn project ->
+      :server
+      |> ServerNaming.name(project)
+      |> ProjectServer.get()
+      |> StorageAdapter.save()
+    end)
+  end
 end

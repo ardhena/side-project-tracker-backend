@@ -4,8 +4,7 @@ defmodule SideProjectTracker.OTP.PeriodicServer do
   The state is saved every 5 minutes.
   """
   use GenServer
-  alias SideProjectTracker.OTP.{ProjectServer, StorageAdapter}
-  import SideProjectTracker.OTP.ServerNaming, only: [name: 2]
+  alias SideProjectTracker.OTP.StorageAdapter
 
   def start_link(opts) do
     GenServer.start_link(__MODULE__, :ok, opts)
@@ -17,13 +16,7 @@ defmodule SideProjectTracker.OTP.PeriodicServer do
   end
 
   def handle_info(:work, state) do
-    StorageAdapter.list_projects()
-    |> Enum.each(fn project ->
-      :server
-      |> name(project)
-      |> ProjectServer.get()
-      |> StorageAdapter.save()
-    end)
+    StorageAdapter.save_server_memory()
 
     schedule_work()
     {:noreply, state}
