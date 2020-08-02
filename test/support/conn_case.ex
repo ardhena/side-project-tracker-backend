@@ -15,7 +15,8 @@ defmodule SideProjectTrackerWeb.ConnCase do
 
   using do
     quote do
-      use Phoenix.ConnTest
+      import Plug.Conn
+      import Phoenix.ConnTest
       import SideProjectTrackerWeb.Router.Helpers
       import SideProjectTracker.Factory
       import Mock

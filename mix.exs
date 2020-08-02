@@ -5,7 +5,7 @@ defmodule SideProjectTracker.MixProject do
     [
       app: :side_project_tracker,
       version: "1.0.0",
-      elixir: "~> 1.8",
+      elixir: "~> 1.10",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
@@ -24,17 +24,16 @@ defmodule SideProjectTracker.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:phoenix, "~> 1.4.0"},
-      {:phoenix_pubsub, "~> 1.1"},
-      {:phoenix_html, "~> 2.11"},
+      {:phoenix, "~> 1.5.0"},
+      {:phoenix_pubsub, "~> 2.0"},
+      {:phoenix_html, "~> 2.14"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:plug_cowboy, "~> 2.0"},
-      {:cowboy, "~> 2.3"},
+      {:plug_cowboy, "~> 2.1"},
+      {:plug, "~> 1.10"},
+      {:cowboy, "~> 2.7.0"},
       {:jason, "~> 1.0"},
       {:cors_plug, "~> 2.0"},
-      {:distillery,
-       git: "https://github.com/ardhena/distillery.git",
-       branch: "fix-loading-pidfile-config-from-vm-args"},
+      {:distillery, "~> 2.1.0"},
       {:mock, "~> 0.3.0", only: :test},
       {:meck, "~> 0.8.13", only: :test},
       {:ex_machina, "~> 2.2", only: :test}
