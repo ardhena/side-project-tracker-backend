@@ -7,9 +7,8 @@ defmodule SideProjectTracker.Storage.ProjectsAdapter do
   alias SideProjectTracker.Projects.Project
 
   @doc """
-  Saves project in a file, serialized to json.
-  Right now every project is saved in a `defult.json` file. The base path for file is set in
-  configuration.
+  Saves project in a file, serialized to json, file name corresponds to project key.
+  The base path for file is set in configuration.
   """
   @spec save(project :: Project.t()) :: {:ok, String.t()} | {:error, any()}
   def save(%Project{} = project) do
@@ -40,6 +39,24 @@ defmodule SideProjectTracker.Storage.ProjectsAdapter do
     project
     |> file_path()
     |> File.write(json)
+    |> case do
+      :ok ->
+        {:ok, file_path(project)}
+
+      _ = error ->
+        error
+    end
+  end
+
+  @doc """
+  Removes project file.
+  The base path for file is set in configuration.
+  """
+  @spec remove(project :: Project.t()) :: :ok | {:error, any()}
+  def remove(%Project{} = project) do
+    project
+    |> file_path()
+    |> File.rm()
     |> case do
       :ok ->
         {:ok, file_path(project)}
@@ -107,6 +124,6 @@ defmodule SideProjectTracker.Storage.ProjectsAdapter do
     end
   end
 
-  defp base_path, do: Application.get_env(:side_project_tracker, :storage_path)
+  def base_path, do: Application.get_env(:side_project_tracker, :storage_path)
   defp file_path(%Project{key: key}), do: base_path() <> "/#{key}.json"
 end

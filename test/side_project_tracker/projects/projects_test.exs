@@ -9,7 +9,7 @@ defmodule SideProjectTracker.ProjectsTest do
   describe "get_projects/0" do
     test "returns project keys" do
       with_mocks([
-        {ProjectsAdapter, [:passthrough], [list_projects: fn -> [build(:project)] end]}
+        {Supervisor, [:passthrough], [list_projects: fn -> [build(:project)] end]}
       ]) do
         assert [%{key: "default"}] == Projects.get_projects()
       end
@@ -17,24 +17,24 @@ defmodule SideProjectTracker.ProjectsTest do
   end
 
   describe "sync_projects/0" do
-    test "syncs memory into files" do
-      with_mocks([
-        {ProjectsAdapter, [:passthrough],
-         [
-           list_projects: fn -> [build(:project)] end,
-           save: fn _arg -> {:ok, "filename.json"} end
-         ]},
-        {Server, [:passthrough], [get: fn _arg -> :ok end]}
-      ]) do
-        assert [ok: "filename.json"] == Projects.sync_projects()
-      end
+    test "syncs memory into files and removes project files that are not in memory" do
+      Projects.new_project("default")
+      File.write(ProjectsAdapter.base_path() <> "/invalid.json", "")
+
+      assert %{removed: [ok: "/tmp/invalid.json"], saved: [ok: "/tmp/default.json"]} ==
+               Projects.sync_projects()
+
+      {:ok, dir_contents} = File.ls(ProjectsAdapter.base_path())
+      assert true == "default.json" in dir_contents
+      assert false == "invalid.json" in dir_contents
+
+      File.rm(ProjectsAdapter.base_path() <> "/default.json")
     end
   end
 
   describe "new_project/1" do
     test "creates new project" do
       with_mocks([
-        {ProjectsAdapter, [:passthrough], [save: fn _arg -> {:ok, "filename.json"} end]},
         {Server, [:passthrough], [get: fn _arg -> :ok end]},
         {Supervisor, [:passthrough], [add_child: fn _arg -> {:ok, "pid"} end]}
       ]) do

@@ -12,7 +12,7 @@ defmodule SideProjectTracker.Projects do
   """
   @spec get_projects() :: list(%{key: String.t()})
   def get_projects do
-    ProjectsAdapter.list_projects()
+    Supervisor.list_projects()
     |> Enum.map(fn project ->
       project
       |> Map.from_struct()
@@ -23,9 +23,16 @@ defmodule SideProjectTracker.Projects do
   @doc """
   Saves content of `OTP.Projects.Storage` into files using storage adapter
   """
-  @spec sync_projects() :: list(ok: String.t())
+  @spec sync_projects() :: %{saved: list(ok: String.t()), removed: list(ok: String.t())}
   def sync_projects do
-    ProjectsAdapter.list_projects()
+    %{
+      saved: save_from_otp(),
+      removed: remove_files()
+    }
+  end
+
+  defp save_from_otp do
+    Supervisor.list_projects()
     |> Enum.map(fn project ->
       :server
       |> name(project)
@@ -34,16 +41,24 @@ defmodule SideProjectTracker.Projects do
     end)
   end
 
+  defp remove_files do
+    (ProjectsAdapter.list_projects() -- Supervisor.list_projects())
+    |> Enum.map(fn project ->
+      ProjectsAdapter.remove(project)
+    end)
+  end
+
   @doc """
   Creates new project
   """
   @spec new_project(key :: String.t()) :: :ok
   def new_project(key) do
-    project = Project.new(%{key: key})
-
-    with {:ok, _file_name} <- ProjectsAdapter.save(project),
-         {:ok, _pid} <- Supervisor.add_child(project) do
-      :ok
+    %{key: key}
+    |> Project.new()
+    |> Supervisor.add_child()
+    |> case do
+      {:ok, _pid} -> :ok
+      result -> result
     end
   end
 

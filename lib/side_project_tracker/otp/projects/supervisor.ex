@@ -38,4 +38,18 @@ defmodule SideProjectTracker.OTP.Projects.Supervisor do
 
     Supervisor.child_spec({Server, [name: id, project: project]}, id: id)
   end
+
+  @doc """
+  Lists all the projects that have a storage server
+  """
+  def list_projects do
+    Supervisor.which_children(__MODULE__)
+    |> Enum.filter(fn {_name, _pid, :worker, [module_name]} ->
+      module_name == SideProjectTracker.OTP.Projects.Storage
+    end)
+    |> Enum.map(fn {name, _pid, :worker, [SideProjectTracker.OTP.Projects.Storage]} ->
+      key = name |> Atom.to_string() |> String.split("_storage") |> List.first()
+      Project.new(%{key: key})
+    end)
+  end
 end
