@@ -27,7 +27,7 @@ defmodule SideProjectTracker.Projects do
   def sync_projects do
     %{
       saved: save_from_otp(),
-      removed: remove_files()
+      archived: archive_files()
     }
   end
 
@@ -41,10 +41,10 @@ defmodule SideProjectTracker.Projects do
     end)
   end
 
-  defp remove_files do
+  defp archive_files do
     (ProjectsAdapter.list_projects() -- Supervisor.list_projects())
     |> Enum.map(fn project ->
-      ProjectsAdapter.remove(project)
+      ProjectsAdapter.archive(project)
     end)
   end
 

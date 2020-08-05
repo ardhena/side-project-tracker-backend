@@ -8,7 +8,7 @@ defmodule SideProjectTrackerWeb.Api.V1.ProjectController do
   end
 
   def sync(conn, _params) do
-    with %{saved: _, removed: _} <- Projects.sync_projects() do
+    with %{saved: _, archived: _} <- Projects.sync_projects() do
       render_ok(conn)
     end
   end

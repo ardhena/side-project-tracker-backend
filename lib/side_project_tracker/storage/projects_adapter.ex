@@ -49,17 +49,19 @@ defmodule SideProjectTracker.Storage.ProjectsAdapter do
   end
 
   @doc """
-  Removes project file.
+  Archives project file by adding `.archived` to file name (will not be picked up by a server).
   The base path for file is set in configuration.
   """
-  @spec remove(project :: Project.t()) :: :ok | {:error, any()}
-  def remove(%Project{} = project) do
-    project
-    |> file_path()
-    |> File.rm()
+  @spec archive(project :: Project.t()) :: :ok | {:error, any()}
+  def archive(%Project{} = project) do
+    current_file_path = file_path(project)
+    archived_file_path = current_file_path <> ".archived"
+
+    current_file_path
+    |> File.rename(archived_file_path)
     |> case do
       :ok ->
-        {:ok, file_path(project)}
+        {:ok, archived_file_path}
 
       _ = error ->
         error

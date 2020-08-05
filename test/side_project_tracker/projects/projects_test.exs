@@ -21,14 +21,16 @@ defmodule SideProjectTracker.ProjectsTest do
       Projects.new_project("default")
       File.write(ProjectsAdapter.base_path() <> "/invalid.json", "")
 
-      assert %{removed: [ok: "/tmp/invalid.json"], saved: [ok: "/tmp/default.json"]} ==
+      assert %{archived: [ok: "/tmp/invalid.json.archived"], saved: [ok: "/tmp/default.json"]} ==
                Projects.sync_projects()
 
       {:ok, dir_contents} = File.ls(ProjectsAdapter.base_path())
       assert true == "default.json" in dir_contents
       assert false == "invalid.json" in dir_contents
+      assert true == "invalid.json.archived" in dir_contents
 
       File.rm(ProjectsAdapter.base_path() <> "/default.json")
+      File.rm(ProjectsAdapter.base_path() <> "/invalid.json.archived")
     end
   end
 

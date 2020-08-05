@@ -58,7 +58,7 @@ defmodule SideProjectTrackerWeb.Api.V1.ProjectControllerTest do
     test "syncs server memory into files", %{conn: conn} do
       with_mocks([
         {Projects, [:passthrough],
-         [sync_projects: fn -> %{saved: [ok: "filename.json"], removed: []} end]}
+         [sync_projects: fn -> %{saved: [ok: "filename.json"], archived: []} end]}
       ]) do
         conn = put(conn, api_v1_project_path(conn, :sync))
         assert response(conn, 204)
