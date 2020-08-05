@@ -1,12 +1,13 @@
-defmodule SideProjectTracker.OTP.ProjectStorage do
+defmodule SideProjectTracker.OTP.Projects.Storage do
   @moduledoc """
-  `ProjectStorage` module acts as a storage for project struct and data.
+  `OTP.Projects.Storage` module acts as a storage for project struct and data.
   """
   use GenServer
-  alias SideProjectTracker.{Projects.Project, OTP.StorageAdapter}
+  alias SideProjectTracker.Projects.Project
+  alias SideProjectTracker.Storage.ProjectsAdapter
 
   def start_link(name: name, project: project) do
-    GenServer.start_link(__MODULE__, StorageAdapter.load(project), name: name)
+    GenServer.start_link(__MODULE__, ProjectsAdapter.load(project), name: name)
   end
 
   # API
@@ -42,6 +43,6 @@ defmodule SideProjectTracker.OTP.ProjectStorage do
   end
 
   def terminate(_reason, state) do
-    StorageAdapter.save(state)
+    ProjectsAdapter.save(state)
   end
 end

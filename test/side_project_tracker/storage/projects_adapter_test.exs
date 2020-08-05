@@ -1,12 +1,12 @@
-defmodule SideProjectTracker.OTP.StorageAdapterTest do
+defmodule SideProjectTracker.Storage.ProjectsAdapterTest do
   use ExUnit.Case, async: false
   import SideProjectTracker.Factory
 
-  alias SideProjectTracker.OTP.StorageAdapter
+  alias SideProjectTracker.Storage.ProjectsAdapter
 
   setup do
     project = build(:project)
-    {:ok, file_path} = StorageAdapter.save(project)
+    {:ok, file_path} = ProjectsAdapter.save(project)
 
     %{project: project, file_path: file_path}
   end
@@ -26,7 +26,7 @@ defmodule SideProjectTracker.OTP.StorageAdapterTest do
       # without changes in file - don't write to file
       :timer.sleep(1000)
 
-      assert {:ok, ^file_path} = StorageAdapter.save(project)
+      assert {:ok, ^file_path} = ProjectsAdapter.save(project)
 
       assert {:ok, json} == File.read(file_path)
 
@@ -42,7 +42,7 @@ defmodule SideProjectTracker.OTP.StorageAdapterTest do
       changed_json =
         "{\"columns\":[{\"key\":\"todo\",\"name\":\"To do\"},{\"key\":\"doing\",\"name\":\"Doing\"},{\"key\":\"done\",\"name\":\"Done\"}],\"key\":\"default\",\"tasks\":[{\"column_key\":\"todo\",\"key\":\"1\",\"name\":\"some task\",\"version\":null}],\"versions\":[{\"code\":\"v1.0.0\"},{\"code\":\"v1.1.0\"},{\"code\":\"v1.2.0\"}]}"
 
-      assert {:ok, ^file_path} = StorageAdapter.save(changed_project)
+      assert {:ok, ^file_path} = ProjectsAdapter.save(changed_project)
 
       assert {:ok, changed_json} == File.read(file_path)
 
@@ -56,7 +56,7 @@ defmodule SideProjectTracker.OTP.StorageAdapterTest do
 
   describe "load/1" do
     test "loads project from default file", %{project: project, file_path: file_path} do
-      assert project == StorageAdapter.load(project)
+      assert project == ProjectsAdapter.load(project)
 
       File.rm!(file_path)
     end
@@ -78,7 +78,7 @@ defmodule SideProjectTracker.OTP.StorageAdapterTest do
                  tasks: [],
                  versions: []
                }
-             ] = StorageAdapter.list_projects()
+             ] = ProjectsAdapter.list_projects()
     end
   end
 
@@ -118,7 +118,7 @@ defmodule SideProjectTracker.OTP.StorageAdapterTest do
                    }
                  ]
                }
-             ] = StorageAdapter.load_projects()
+             ] = ProjectsAdapter.load_projects()
     end
   end
 end

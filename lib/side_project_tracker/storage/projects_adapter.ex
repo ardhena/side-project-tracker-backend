@@ -1,11 +1,10 @@
-defmodule SideProjectTracker.OTP.StorageAdapter do
+defmodule SideProjectTracker.Storage.ProjectsAdapter do
   @moduledoc """
-  `StorageAdapter` module takes care of persistence of what single `ProjectStorage` agent keeps
-  in memory. The project struct is serialized to json during save and parsed from json to struct
-  during load.
+  `Storage.ProjectsAdapter` module takes care of persistence of what single `OTP.Projects.Storage`
+  agent keeps in memory. The project struct is serialized to json during save and parsed from json
+  to struct during load.
   """
   alias SideProjectTracker.Projects.Project
-  alias SideProjectTracker.OTP.{ProjectServer, ServerNaming, StorageAdapter}
 
   @doc """
   Saves project in a file, serialized to json.
@@ -110,17 +109,4 @@ defmodule SideProjectTracker.OTP.StorageAdapter do
 
   defp base_path, do: Application.get_env(:side_project_tracker, :storage_path)
   defp file_path(%Project{key: key}), do: base_path() <> "/#{key}.json"
-
-  @doc """
-  Saves content of project server storage into files using storage adapter
-  """
-  def save_server_memory do
-    StorageAdapter.list_projects()
-    |> Enum.each(fn project ->
-      :server
-      |> ServerNaming.name(project)
-      |> ProjectServer.get()
-      |> StorageAdapter.save()
-    end)
-  end
 end

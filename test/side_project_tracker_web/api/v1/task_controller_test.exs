@@ -1,12 +1,12 @@
 defmodule SideProjectTrackerWeb.Api.V1.TaskControllerTest do
   use SideProjectTrackerWeb.ConnCase
-  alias SideProjectTracker.{OTP.MainServer, Projects.Project}
+  alias SideProjectTracker.{Projects, Projects.Project}
 
   describe "GET index" do
     test "returns projects", %{conn: conn} do
       with_mocks([
-        {MainServer, [:passthrough],
-         [get_project_tasks: fn _arg -> build(:project) |> Project.to_old_format() end]}
+        {Projects, [:passthrough],
+         [get_project_tasks: fn _arg -> build(:project) |> Project.get_tasks() end]}
       ]) do
         conn = get(conn, api_v1_project_task_path(conn, :index, "default"))
 

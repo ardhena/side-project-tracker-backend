@@ -1,12 +1,12 @@
-defmodule SideProjectTracker.OTP.ProjectServer do
+defmodule SideProjectTracker.OTP.Projects.Server do
   @moduledoc """
-  `ProjectServer` module is responsible for performing operations on `ProjectStorage` data.
-  It has two main functions: `get/1` - using call and `perform/3` - using cast. All call
+  `OTP.Projects.Server` module is responsible for performing operations on `OTP.Projects.Storage`
+   data. It has two main functions: `get/1` - using call and `perform/3` - using cast. All call
   functions return data from the storage, all cast functions transform and save data in the
   storage.
   """
   use GenServer
-  alias SideProjectTracker.{Projects.Project, OTP.ProjectStorage}
+  alias SideProjectTracker.{Projects.Project, OTP.Projects.Storage}
   import SideProjectTracker.OTP.ServerNaming, only: [name: 2]
 
   # API
@@ -59,16 +59,16 @@ defmodule SideProjectTracker.OTP.ProjectServer do
   end
 
   def handle_call(:get, _from, storage_name) do
-    {:reply, ProjectStorage.get(storage_name), storage_name}
+    {:reply, Storage.get(storage_name), storage_name}
   end
 
   def handle_cast({:new_task, task_key, column_key, position}, storage_name) do
     updated_data =
       storage_name
-      |> ProjectStorage.get()
+      |> Storage.get()
       |> Project.add_task_to_column(task_key, column_key, position)
 
-    ProjectStorage.update(storage_name, updated_data)
+    Storage.update(storage_name, updated_data)
 
     {:noreply, storage_name}
   end
@@ -76,10 +76,10 @@ defmodule SideProjectTracker.OTP.ProjectServer do
   def handle_cast({:update_task, task_key, new_task_name, new_task_version}, storage_name) do
     updated_data =
       storage_name
-      |> ProjectStorage.get()
+      |> Storage.get()
       |> Project.update_task(task_key, new_task_name, new_task_version)
 
-    ProjectStorage.update(storage_name, updated_data)
+    Storage.update(storage_name, updated_data)
 
     {:noreply, storage_name}
   end
@@ -87,10 +87,10 @@ defmodule SideProjectTracker.OTP.ProjectServer do
   def handle_cast({:move_task, task_key, column_key}, storage_name) do
     updated_data =
       storage_name
-      |> ProjectStorage.get()
+      |> Storage.get()
       |> Project.move_task_to_column(task_key, column_key)
 
-    ProjectStorage.update(storage_name, updated_data)
+    Storage.update(storage_name, updated_data)
 
     {:noreply, storage_name}
   end
@@ -98,10 +98,10 @@ defmodule SideProjectTracker.OTP.ProjectServer do
   def handle_cast({:delete_task, task_key}, storage_name) do
     updated_data =
       storage_name
-      |> ProjectStorage.get()
+      |> Storage.get()
       |> Project.delete_task(task_key)
 
-    ProjectStorage.update(storage_name, updated_data)
+    Storage.update(storage_name, updated_data)
 
     {:noreply, storage_name}
   end
@@ -109,10 +109,10 @@ defmodule SideProjectTracker.OTP.ProjectServer do
   def handle_cast({:new_version, version_code}, storage_name) do
     updated_data =
       storage_name
-      |> ProjectStorage.get()
+      |> Storage.get()
       |> Project.add_version(version_code)
 
-    ProjectStorage.update(storage_name, updated_data)
+    Storage.update(storage_name, updated_data)
 
     {:noreply, storage_name}
   end

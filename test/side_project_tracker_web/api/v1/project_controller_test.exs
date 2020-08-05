@@ -1,11 +1,13 @@
 defmodule SideProjectTrackerWeb.Api.V1.ProjectControllerTest do
   use SideProjectTrackerWeb.ConnCase
-  alias SideProjectTracker.OTP.{MainServer, ProjectServer, StorageAdapter}
+  alias SideProjectTracker.OTP.Projects.Server
+  alias SideProjectTracker.Storage.ProjectsAdapter
+  alias SideProjectTracker.Projects
 
   describe "GET index" do
     test "returns projects", %{conn: conn} do
       with_mocks([
-        {StorageAdapter, [:passthrough], [list_projects: fn -> [build(:project)] end]}
+        {ProjectsAdapter, [:passthrough], [list_projects: fn -> [build(:project)] end]}
       ]) do
         conn = get(conn, api_v1_project_path(conn, :index))
 
@@ -19,7 +21,7 @@ defmodule SideProjectTrackerWeb.Api.V1.ProjectControllerTest do
   describe "GET show" do
     test "returns project", %{conn: conn} do
       with_mocks([
-        {ProjectServer, [:passthrough], [get: fn _arg -> build(:project) end]}
+        {Server, [:passthrough], [get: fn _arg -> build(:project) end]}
       ]) do
         conn = get(conn, api_v1_project_path(conn, :show, "default"))
 
@@ -44,7 +46,7 @@ defmodule SideProjectTrackerWeb.Api.V1.ProjectControllerTest do
 
     test "returns ok", %{conn: conn} do
       with_mocks([
-        {MainServer, [:passthrough], [new_project: fn _arg -> :ok end]}
+        {Projects, [:passthrough], [new_project: fn _arg -> :ok end]}
       ]) do
         conn = post(conn, api_v1_project_path(conn, :create, %{key: "new project"}))
 
@@ -55,8 +57,12 @@ defmodule SideProjectTrackerWeb.Api.V1.ProjectControllerTest do
 
   describe "PUT sync" do
     test "syncs server memory into files", %{conn: conn} do
-      conn = put(conn, api_v1_project_path(conn, :sync))
-      assert response(conn, 204)
+      with_mocks([
+        {Projects, [:passthrough], [sync_projects: fn -> ["filename.json"] end]}
+      ]) do
+        conn = put(conn, api_v1_project_path(conn, :sync))
+        assert response(conn, 204)
+      end
     end
   end
 end

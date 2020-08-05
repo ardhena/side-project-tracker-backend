@@ -81,7 +81,7 @@ defmodule SideProjectTracker.Projects.Project do
     |> put(:versions, versions ++ [Version.new(%{code: version_code})])
   end
 
-  def to_old_format(%__MODULE__{columns: columns, tasks: tasks}) do
+  def get_tasks(%__MODULE__{columns: columns, tasks: tasks}) do
     columns
     |> Enum.map(fn %{key: key, name: name} ->
       column_tasks =

@@ -123,9 +123,9 @@ defmodule SideProjectTracker.Projects.ProjectTest do
     end
   end
 
-  describe "to_old_format/1" do
+  describe "get_tasks/1" do
     test "returns project formatted in an old way", %{project: project} do
-      assert Project.to_old_format(project) == [
+      assert Project.get_tasks(project) == [
                %{
                  key: "todo",
                  name: "To do",

@@ -24,7 +24,7 @@ defmodule SideProjectTrackerWeb do
       import Plug.Conn
       alias SideProjectTrackerWeb.Router.Helpers, as: Routes
 
-      alias SideProjectTracker.OTP.MainServer
+      alias SideProjectTracker.Projects
 
       def render_ok(conn) do
         conn
@@ -35,8 +35,8 @@ defmodule SideProjectTrackerWeb do
       def render_400(conn) do
         conn
         |> put_status(:bad_request)
-        |> put_view(SideProjectTrackerWeb.Api.ErrorView)
-        |> render(:bad_request)
+        |> put_view(SideProjectTrackerWeb.ErrorView)
+        |> render(:"400")
       end
     end
   end

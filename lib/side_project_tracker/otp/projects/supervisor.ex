@@ -1,7 +1,8 @@
-defmodule SideProjectTracker.OTP.ProjectSupervisor do
+defmodule SideProjectTracker.OTP.Projects.Supervisor do
   use Supervisor
-  alias SideProjectTracker.OTP.{ProjectServer, ProjectStorage, StorageAdapter}
+  alias SideProjectTracker.Storage.ProjectsAdapter
   alias SideProjectTracker.Projects.Project
+  alias SideProjectTracker.OTP.Projects.{Server, Storage}
   import SideProjectTracker.OTP.ServerNaming, only: [name: 2]
 
   def start_link(name: name) do
@@ -9,7 +10,7 @@ defmodule SideProjectTracker.OTP.ProjectSupervisor do
   end
 
   def init(_init_args) do
-    StorageAdapter.list_projects()
+    ProjectsAdapter.list_projects()
     |> Enum.flat_map(&build_servers_for_project(&1))
     |> Supervisor.init(strategy: :one_for_one)
   end
@@ -29,12 +30,12 @@ defmodule SideProjectTracker.OTP.ProjectSupervisor do
   defp build_child_spec(:storage, project) do
     id = name(:storage, project)
 
-    Supervisor.child_spec({ProjectStorage, [name: id, project: project]}, id: id)
+    Supervisor.child_spec({Storage, [name: id, project: project]}, id: id)
   end
 
   defp build_child_spec(:server, project) do
     id = name(:server, project)
 
-    Supervisor.child_spec({ProjectServer, [name: id, project: project]}, id: id)
+    Supervisor.child_spec({Server, [name: id, project: project]}, id: id)
   end
 end

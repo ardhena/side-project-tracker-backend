@@ -1,10 +1,10 @@
 defmodule SideProjectTracker.OTP.PeriodicServer do
   @moduledoc """
-  `PeriodicServer` module takes care of saving `ProjectServer` state to file via adapter.
-  The state is saved every 5 minutes.
+  `OTP.PeriodicServer` module takes care of saving `OTP.Projects.Server` state to file via adapter.
+  The state is saved every 24 hours.
   """
   use GenServer
-  alias SideProjectTracker.OTP.StorageAdapter
+  alias SideProjectTracker.Projects
 
   def start_link(opts) do
     GenServer.start_link(__MODULE__, :ok, opts)
@@ -16,7 +16,7 @@ defmodule SideProjectTracker.OTP.PeriodicServer do
   end
 
   def handle_info(:work, state) do
-    StorageAdapter.save_server_memory()
+    Projects.sync_projects()
 
     schedule_work()
     {:noreply, state}

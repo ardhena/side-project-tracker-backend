@@ -2,7 +2,7 @@ defmodule SideProjectTrackerWeb.Api.V1.VersionController do
   use SideProjectTrackerWeb, :controller
 
   def create(conn, %{"project_id" => project_key, "code" => code}) do
-    :ok = MainServer.perform_in_project(project_key, :new_version, {code})
+    :ok = Projects.new_project_version(project_key, {code})
 
     render_ok(conn)
   end
