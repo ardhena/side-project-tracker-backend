@@ -57,6 +57,17 @@ defmodule SideProjectTracker.ProjectsTest do
     end
   end
 
+  describe "delete_project/1" do
+    test "deletes project" do
+      with_mocks([
+        {Server, [:passthrough], [get: fn _arg -> build(:project) end]},
+        {Supervisor, [:passthrough], [remove_child: fn _arg -> :ok end]}
+      ]) do
+        assert :ok = Projects.delete_project("default")
+      end
+    end
+  end
+
   describe "get_project_tasks/1" do
     test "gets project tasks" do
       project = build(:project)

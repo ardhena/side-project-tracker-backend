@@ -73,6 +73,20 @@ defmodule SideProjectTracker.Projects do
   end
 
   @doc """
+  Deletes project
+  """
+  @spec delete_project(key :: String.t()) :: :ok
+  def delete_project(key) do
+    key
+    |> get_project()
+    |> Supervisor.remove_child()
+    |> case do
+      :ok -> :ok
+      result -> result
+    end
+  end
+
+  @doc """
   Gets tasks from individual project storage
   """
   @spec get_project_tasks(key :: String.t()) ::

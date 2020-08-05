@@ -20,6 +20,16 @@ defmodule SideProjectTracker.OTP.Projects.Supervisor do
     Supervisor.start_child(__MODULE__, build_child_spec(:server, project))
   end
 
+  def remove_child(%Project{} = project) do
+    server_id = name(:server, project)
+    :ok = Supervisor.terminate_child(__MODULE__, server_id)
+    :ok = Supervisor.delete_child(__MODULE__, server_id)
+
+    storage_id = name(:storage, project)
+    :ok = Supervisor.terminate_child(__MODULE__, storage_id)
+    :ok = Supervisor.delete_child(__MODULE__, storage_id)
+  end
+
   defp build_servers_for_project(%Project{} = project) do
     [
       build_child_spec(:storage, project),

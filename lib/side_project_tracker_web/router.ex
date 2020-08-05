@@ -12,7 +12,7 @@ defmodule SideProjectTrackerWeb.Router do
     put("/projects/sync", ProjectController, :sync)
     options("/projects/sync", ProjectController, :options)
 
-    resources("/projects", ProjectController, only: [:index, :create, :show]) do
+    resources("/projects", ProjectController, only: [:index, :create, :show, :delete]) do
       resources("/versions", VersionController, only: [:create])
       options("/versions", VersionController, :options)
 

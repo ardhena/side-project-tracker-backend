@@ -19,6 +19,12 @@ defmodule SideProjectTrackerWeb.Api.V1.ProjectController do
     |> render(:project)
   end
 
+  def delete(conn, %{"id" => project_key}) do
+    with :ok <- Projects.delete_project(project_key) do
+      render_ok(conn)
+    end
+  end
+
   def create(conn, %{"key" => project_key}) do
     with :ok <- Projects.new_project(project_key) do
       render_ok(conn)

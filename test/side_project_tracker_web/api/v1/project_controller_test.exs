@@ -36,6 +36,19 @@ defmodule SideProjectTrackerWeb.Api.V1.ProjectControllerTest do
     end
   end
 
+  describe "DELETE delete" do
+    test "returns ok", %{conn: conn} do
+      with_mocks([
+        {Server, [:passthrough], [get: fn _arg -> build(:project) end]},
+        {Supervisor, [:passthrough], [remove_child: fn _arg -> :ok end]}
+      ]) do
+        conn = delete(conn, api_v1_project_path(conn, :delete, "default"))
+
+        assert %{"status" => "ok"} == json_response(conn, 204)
+      end
+    end
+  end
+
   describe "POST create" do
     test "returns 400", %{conn: conn} do
       conn = post(conn, api_v1_project_path(conn, :create, %{}))
