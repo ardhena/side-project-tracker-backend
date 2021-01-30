@@ -33,7 +33,6 @@ defmodule SideProjectTracker.MixProject do
       {:cowboy, "~> 2.7.0"},
       {:jason, "~> 1.0"},
       {:cors_plug, "~> 2.0"},
-      {:distillery, "~> 2.1.0"},
       {:mock, "~> 0.3.0", only: :test},
       {:meck, "~> 0.8.13", only: :test},
       {:ex_machina, "~> 2.2", only: :test}
